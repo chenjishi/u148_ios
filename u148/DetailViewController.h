@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 @class Feed;
 
-@interface DetailViewController : UIViewController <UIWebViewDelegate>
+@interface DetailViewController : UIViewController <UIAlertViewDelegate, UIWebViewDelegate>
 
 @property (nonatomic, strong) UIWebView *webview;
 @property (nonatomic, strong) Feed *feed;

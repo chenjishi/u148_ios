@@ -8,6 +8,13 @@
 
 #import "RootViewController.h"
 #import "MenuViewController.h"
+#import "AFHTTPRequestOperationManager.h"
+#import "User.h"
+#import "UAccountManager.h"
+#import "MBProgressHUD.h"
+#import "FavoriteViewController.h"
+
+#define LOGIN_URL @"http://www.u148.net/json/login"
 
 @interface RootViewController ()
 
@@ -70,7 +77,89 @@
     self.menuViewController = [[MenuViewController alloc] init];
     self.menuViewController.delegate = self;
     self.menuViewController.view.frame = CGRectMake(-200, 64, 200, self.view.frame.size.height - 64);
-    self.isMenuShow = NO;
+    
+    isMenuShow = NO;
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self.menuViewController refreshMenu];
+}
+
+- (void)showLoginDialog
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"登陆"
+                                                    message:@""
+                                                   delegate:self
+                                          cancelButtonTitle:@"取消"
+                                          otherButtonTitles:@"登陆", nil];
+    alert.alertViewStyle = UIAlertViewStyleLoginAndPasswordInput;
+    UITextField *userNameField = [alert textFieldAtIndex:0];
+    userNameField.placeholder = @"邮箱";
+    userNameField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    
+    UITextField *passwordField = [alert textFieldAtIndex:1];
+    passwordField.placeholder = @"密码";
+    passwordField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    [alert show];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 1) {
+        UITextField *userNameField = [alertView textFieldAtIndex:0];
+        UITextField *passwordField = [alertView textFieldAtIndex:1];
+        
+        NSString *userName = userNameField.text;
+        NSString *password = passwordField.text;
+        
+        if ([userName length] == 0 || [password length] == 0) {
+            [self showToast:@"请输入用户名或密码"];
+            return;
+        }
+        
+        [self login:userName withPassword:password];
+    }
+}
+
+- (void)login:(NSString *)name withPassword:(NSString *)password
+{
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
+    
+    NSDictionary *params = @{@"email" : name, @"password" : password};
+    [manager POST:[NSString stringWithFormat:LOGIN_URL] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *dict = (NSDictionary *) responseObject;
+            NSDictionary *data = [dict objectForKey:@"data"];
+            
+            User *user = [User alloc];
+            user.icon = [data objectForKey:@"icon"];
+            user.nickname = [data objectForKey:@"nickname"];
+            user.sexStr = [data objectForKey:@"sex"];
+            user.token = [data objectForKey:@"token"];
+            
+            [[UAccountManager sharedManager] setUserAccount:user];
+            [self.menuViewController refreshMenu];
+            [self showToast:@"登陆成功"];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [self showToast:@"登陆失败，请检查用户名或密码，或者网络:)"];
+    }];
+}
+
+- (void)showToast:(NSString *)tips
+{
+	MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
+    hud.mode = MBProgressHUDModeText;
+    hud.labelText = tips;
+    
+    hud.removeFromSuperViewOnHide = YES;
+    
+    [hud hide:YES afterDelay:2];
 }
 
 - (void)onTabClicked:(NSUInteger)index
@@ -88,8 +177,30 @@
 
 - (void)onMenuClicked:(NSUInteger)index
 {
-    NSLog(@"clicked at %d", index);
+    User *user = [[UAccountManager sharedManager] getUserAccount];
+    if (user != nil && user.token.length > 0) {
+        if (index == 0) {
+            user.token = @"";
+            [[UAccountManager sharedManager] setUserAccount:user];
+            [self showToast:@"账号已退出"];
+            [self.menuViewController refreshMenu];
+        }
+        
+        if (index == 1) {
+            [self openFavoriteController];
+        }
+    } else {
+        if (index == 0 || index == 2) {
+            [self showLoginDialog];
+        }
+    }
     [self hideMenu];
+}
+
+- (void)openFavoriteController
+{
+    FavoriteViewController *favoriteController = [[FavoriteViewController alloc] init];
+    [self.navigationController pushViewController:favoriteController animated:YES];
 }
 
 - (void)hideMenu
@@ -99,7 +210,7 @@
         self.menuViewController.view.frame = CGRectMake(-200, 64, 200, self.view.frame.size.height - 64);
     } completion:^(BOOL finished) {
         [self.menuViewController.view removeFromSuperview];
-        self.isMenuShow = NO;
+        isMenuShow = NO;
     }];
 }
 
@@ -107,7 +218,7 @@
 {
     [self.view insertSubview:self.menuViewController.view aboveSubview:_contentView];
     [UIView animateWithDuration:0.3 animations:^{
-        if (self.isMenuShow) {
+        if (isMenuShow) {
             _contentView.frame = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64);
             self.menuViewController.view.frame = CGRectMake(-200, 64, 200, self.view.frame.size.height - 64);
         } else{
@@ -116,15 +227,11 @@
             self.menuViewController.view.frame = CGRectMake(0, 64, 200, self.view.frame.size.height - 64);
         }
     } completion:^(BOOL finished) {
-        if (self.isMenuShow) {
+        if (isMenuShow) {
             [self.menuViewController.view removeFromSuperview];
         }
-        self.isMenuShow = !self.isMenuShow;
+        isMenuShow = !isMenuShow;
     }];
-}
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
 }
 
 - (void)viewDidLayoutSubviews

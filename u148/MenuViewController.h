@@ -21,8 +21,12 @@
 {
     User *user;
     NSMutableArray *titles;
+    NSMutableArray *icons;
+    UITableView *menuTableView;
 }
 
 @property (assign, nonatomic) id<SlideMenuDelegate> delegate;
+
+- (void)refreshMenu;
 
 @end

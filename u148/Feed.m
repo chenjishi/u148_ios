@@ -22,7 +22,7 @@
         self.summary = [dict objectForKey:@"summary"];
         self.picMin = [dict objectForKey:@"pic_min"];
         self.star = [[dict objectForKey:@"star"] intValue];
-        self.createTime = [dict objectForKey:@"create_time"];
+        self.createTime = [[dict objectForKey:@"create_time"] longLongValue];
         self.browses = [[dict objectForKey:@"count_browse"] intValue];
         self.reviews = [[dict objectForKey:@"count_review"] intValue];
         

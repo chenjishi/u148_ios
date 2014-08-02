@@ -10,10 +10,11 @@
 #import "MenuViewController.h"
 #import "TabGroupView.h"
 
-@interface RootViewController : UIViewController <UIScrollViewDelegate, SlideMenuDelegate,
-UIAlertViewDelegate, TabBarDelegate>
+@interface RootViewController : UIViewController <UIAlertViewDelegate, UIScrollViewDelegate,
+SlideMenuDelegate, UIAlertViewDelegate, TabBarDelegate>
 {
     NSInteger tabIndex;
+    BOOL isMenuShow;
 }
 
 @property (nonatomic, readonly) UIView *contentView;
@@ -21,7 +22,6 @@ UIAlertViewDelegate, TabBarDelegate>
 @property (nonatomic, readonly) NSArray *controllers;
 @property (nonatomic, strong) TabGroupView *tabGroupView;
 @property (nonatomic, strong) MenuViewController *menuViewController;
-@property (nonatomic, assign) BOOL isMenuShow;
 
 - (id) initWithViewControllers:(NSArray *)controllers;
 

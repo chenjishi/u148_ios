@@ -18,7 +18,7 @@
 @property (nonatomic, strong) NSString *summary;
 @property (nonatomic, strong) NSString *picMin;
 @property (nonatomic, assign) int star;
-@property (nonatomic, strong) NSString *createTime;
+@property (nonatomic, assign) long long createTime;
 @property (nonatomic, assign) int browses;
 @property (nonatomic, assign) int reviews;
 

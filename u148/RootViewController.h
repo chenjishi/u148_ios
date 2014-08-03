@@ -9,12 +9,16 @@
 #import <UIKit/UIKit.h>
 #import "MenuViewController.h"
 #import "TabGroupView.h"
+#import <MessageUI/MessageUI.h>
+@class CustomIOS7AlertView;
 
 @interface RootViewController : UIViewController <UIAlertViewDelegate, UIScrollViewDelegate,
-SlideMenuDelegate, UIAlertViewDelegate, TabBarDelegate>
+SlideMenuDelegate, UIAlertViewDelegate, MFMailComposeViewControllerDelegate, TabBarDelegate>
 {
     NSInteger tabIndex;
     BOOL isMenuShow;
+    int clickCount;
+    CustomIOS7AlertView *aboutDialog;
 }
 
 @property (nonatomic, readonly) UIView *contentView;

@@ -13,6 +13,8 @@
 #import "UAccountManager.h"
 #import "MBProgressHUD.h"
 #import "FavoriteViewController.h"
+#import "CustomIOS7AlertView.h"
+#import "SurprizeViewController.h"
 
 #define LOGIN_URL @"http://www.u148.net/json/login"
 
@@ -189,12 +191,48 @@
         if (index == 1) {
             [self openFavoriteController];
         }
+        
+        if (index == 2) {
+            [self sendFeedBack];
+        }
+        
+        if (index == 3) {
+            [self showAboutDialog];
+        }
+        
     } else {
         if (index == 0 || index == 2) {
             [self showLoginDialog];
         }
+        
+        if (index == 3) {
+            [self sendFeedBack];
+        }
+        
+        if (index == 4) {
+            [self showAboutDialog];
+        }
     }
     [self hideMenu];
+}
+
+- (void)sendFeedBack
+{
+    NSString *sdkVersion = [[UIDevice currentDevice] systemVersion];
+    NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    NSArray *recipents = [NSArray arrayWithObjects:@"webmaster@u148.net", @"chenjishi313@gmail.com", nil];
+    
+    MFMailComposeViewController *mailController = [[MFMailComposeViewController alloc] init];
+    mailController.mailComposeDelegate = self;
+    [mailController setSubject:[NSString stringWithFormat:@"有意思吧意见反馈(iOS:%@,version:%@)", sdkVersion, version]];
+    [mailController setToRecipients:recipents];
+    
+    [self presentViewController:mailController animated:YES completion:NULL];
+}
+
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 - (void)openFavoriteController
@@ -232,6 +270,61 @@
         }
         isMenuShow = !isMenuShow;
     }];
+}
+
+- (void)showAboutDialog
+{
+    aboutDialog = [[CustomIOS7AlertView alloc] init];
+    NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 8, 240, 190)];
+    
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_logo_big.png"]];
+    imageView.frame = CGRectMake(70, 20, 100, 96);
+    [view addSubview:imageView];
+    
+    UIButton *versionButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [versionButton setTitle:version forState:UIControlStateNormal];
+    versionButton.titleLabel.font = [UIFont systemFontOfSize:12.0f];
+    [versionButton addTarget:self action:@selector(onVersionClicked) forControlEvents:UIControlEventTouchUpInside];
+    [versionButton setTitleColor:[UIColor colorWithRed:153.0f/255 green:153.0f/255 blue:153.0f/255 alpha:1.0f]
+                        forState:UIControlStateNormal];
+    versionButton.frame = CGRectMake(100, imageView.frame.size.height + imageView.frame.origin.y + 10, 40, 20);
+    [view addSubview:versionButton];
+    
+    CGFloat y = versionButton.frame.origin.y + versionButton.frame.size.height + 16;
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, y, 240, 0)];
+    label.text = @"©2007 - 2019 Www.U148.Net";
+    label.textColor = [UIColor colorWithRed:153.0f/255 green:153.0f/255 blue:153.0f/255 alpha:1.0f];
+    label.font = [UIFont systemFontOfSize:12.0f];
+    [label sizeToFit];
+    [view addSubview:label];
+    
+    CGFloat x = (240 - label.frame.size.width) / 2.0f;
+    label.frame = CGRectMake(x, y, 0, 0);
+    [label sizeToFit];
+    
+    [aboutDialog setContainerView:view];
+    [aboutDialog setButtonTitles:[NSArray arrayWithObject:@"关闭"]];
+    [aboutDialog setUseMotionEffects:YES];
+    
+    [aboutDialog setOnButtonTouchUpInside:^(CustomIOS7AlertView *alertView, int buttonIndex) {
+        [alertView close];
+    }];
+    
+    [aboutDialog show];
+}
+
+- (void)onVersionClicked
+{
+    clickCount += 1;
+    if (clickCount == 8) {
+        clickCount = 0;
+        SurprizeViewController *surprizeController = [[SurprizeViewController alloc] init];
+        [self.navigationController pushViewController:surprizeController animated:YES];
+        
+        [aboutDialog close];
+    }
 }
 
 - (void)viewDidLayoutSubviews

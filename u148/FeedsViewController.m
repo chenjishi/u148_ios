@@ -137,7 +137,7 @@
                   value:[UIColor colorWithRed:255.0/255.0 green:153.0/255.0 blue:0/255.0 alpha:1.0]
                   range:NSMakeRange(0, 4)];
     
-    [cell.imageView setImageWithURL:[NSURL URLWithString:feed.picMin] placeholderImage:[UIImage imageNamed:@"icon.png"]];
+    [cell.imageView setImageWithURL:[NSURL URLWithString:feed.picMin] placeholderImage:[UIImage imageNamed:@"ic_place_holder.png"]];
     cell.textLabel.attributedText = title;
     cell.detailTextLabel.text = feed.summary;
     cell.reviewsLabel.text = [NSString stringWithFormat:@"%i人看过  %i评论", feed.browses, feed.reviews];

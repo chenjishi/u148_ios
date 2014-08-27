@@ -12,15 +12,20 @@
 @interface CommentViewController : UIViewController <UIAlertViewDelegate, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate>
 {
     BOOL isKeyboardShow;
+    
+    UITableView *mTableView;
+    UIView *mFootView;
+    UITextField *mTextField;
+    
+    NSMutableArray *dataArray;
+    NSDateFormatter *dateFormatter;
+    
+    NSString *replyId;
+    User *mUser;
+    
+    int page;
 }
 
-@property (nonatomic, strong) UITableView *commentTableView;
-@property (nonatomic, strong) UITextField *commentField;
-@property (nonatomic, assign) int page;
-@property (nonatomic, strong) NSString *replyId;
 @property (nonatomic, assign) NSString *articleId;
-@property (nonatomic, strong) NSMutableArray *comments;
-@property (nonatomic, strong) NSDateFormatter *dateFormatter;
-@property (nonatomic, strong) User *user;
 
 @end

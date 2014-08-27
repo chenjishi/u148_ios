@@ -7,7 +7,37 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVAudioPlayer.h>
+#import <AVFoundation/AVFoundation.h>
+#import "CustomIOS7AlertView.h"
 
 @interface SurprizeViewController : UIViewController
+{
+    UIImageView *dolphin;
+    UIImageView *bubbleBreakView;
+    
+    UIView *containerView;
+    
+    UILabel *shakeLabel;
+    
+    AVAudioPlayer *waterPlayer;
+    
+    UIImage *bubbleImage;
+    
+    UIImageView *mImageView;
+    UILabel *mUILabel;
+    
+    UIButton *exitButton;
+    
+    BOOL blowed;
+    
+    CustomIOS7AlertView *popwindow;
+    
+    NSMutableArray *dataArray;
+    
+    int currentIndex;
+}
+
+@property (assign) SystemSoundID pewPewSound;
 
 @end

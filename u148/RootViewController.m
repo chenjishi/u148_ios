@@ -15,6 +15,7 @@
 #import "FavoriteViewController.h"
 #import "CustomIOS7AlertView.h"
 #import "SurprizeViewController.h"
+#import "RegisterViewController.h"
 
 #define LOGIN_URL @"http://www.u148.net/json/login"
 
@@ -37,21 +38,20 @@
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-    
-    self.navigationItem.title = @"有意思吧";
+    [super viewDidLoad];    
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     
     UIButton *menuButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [menuButton setImage:[UIImage imageNamed:@"ic_menu.png"] forState:UIControlStateNormal];
+    [menuButton setImage:[UIImage imageNamed:@"ic_nav_menu.png"] forState:UIControlStateNormal];
     [menuButton addTarget:self action:@selector(showMenu) forControlEvents:UIControlEventTouchUpInside];
-    menuButton.frame = CGRectMake(0, 0, 32.5f, 30);
+    menuButton.frame = CGRectMake(0, 0, 26, 26);
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:menuButton];
     
-    
     [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:255.0/255.0 green:153.0/255.0 blue:0/255.0 alpha:1.0]];
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     
     _contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64)];
+    _contentView.backgroundColor = [UIColor colorWithRed:246.0f/255 green:246.0f/255 blue:246.0f/255 alpha:1.0f];
     [self.view addSubview:_contentView];
     
     tabIndex = 0;
@@ -81,6 +81,13 @@
     self.menuViewController.view.frame = CGRectMake(-200, 64, 200, self.view.frame.size.height - 64);
     
     isMenuShow = NO;
+    tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideMenu)];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationItem.title = @"有意思吧";
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -205,6 +212,10 @@
             [self showLoginDialog];
         }
         
+        if (index == 1) {
+            [self openRegister];
+        }
+        
         if (index == 3) {
             [self sendFeedBack];
         }
@@ -216,18 +227,29 @@
     [self hideMenu];
 }
 
+- (void)openRegister
+{
+    RegisterViewController *registerController = [[RegisterViewController alloc] init];
+    [self.navigationController pushViewController:registerController animated:YES];
+}
+
 - (void)sendFeedBack
 {
-    NSString *sdkVersion = [[UIDevice currentDevice] systemVersion];
-    NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
-    NSArray *recipents = [NSArray arrayWithObjects:@"webmaster@u148.net", @"chenjishi313@gmail.com", nil];
-    
     MFMailComposeViewController *mailController = [[MFMailComposeViewController alloc] init];
-    mailController.mailComposeDelegate = self;
-    [mailController setSubject:[NSString stringWithFormat:@"有意思吧意见反馈(iOS:%@,version:%@)", sdkVersion, version]];
-    [mailController setToRecipients:recipents];
     
-    [self presentViewController:mailController animated:YES completion:NULL];
+    if ([MFMailComposeViewController canSendMail]) {
+        NSString *sdkVersion = [[UIDevice currentDevice] systemVersion];
+        NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+        NSArray *recipents = [NSArray arrayWithObjects:@"webmaster@u148.net", @"chenjishi313@gmail.com", nil];
+        
+        mailController.mailComposeDelegate = self;
+        [mailController setSubject:[NSString stringWithFormat:@"有意思吧意见反馈(iOS:%@,version:%@)", sdkVersion, version]];
+        [mailController setToRecipients:recipents];
+        
+        [self presentViewController:mailController animated:YES completion:NULL];
+    } else {
+        [self showToast:@"请先配置您的邮箱账号"];
+    }
 }
 
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
@@ -247,6 +269,7 @@
         _contentView.frame = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64);
         self.menuViewController.view.frame = CGRectMake(-200, 64, 200, self.view.frame.size.height - 64);
     } completion:^(BOOL finished) {
+        [_contentView removeGestureRecognizer:tapRecognizer];
         [self.menuViewController.view removeFromSuperview];
         isMenuShow = NO;
     }];
@@ -259,10 +282,12 @@
         if (isMenuShow) {
             _contentView.frame = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64);
             self.menuViewController.view.frame = CGRectMake(-200, 64, 200, self.view.frame.size.height - 64);
+            [_contentView removeGestureRecognizer:tapRecognizer];
         } else{
             CGRect rect = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64);
             _contentView.frame = CGRectOffset(rect, 200, 0);
             self.menuViewController.view.frame = CGRectMake(0, 64, 200, self.view.frame.size.height - 64);
+            [_contentView addGestureRecognizer:tapRecognizer];
         }
     } completion:^(BOOL finished) {
         if (isMenuShow) {
@@ -321,8 +346,8 @@
     if (clickCount == 8) {
         clickCount = 0;
         SurprizeViewController *surprizeController = [[SurprizeViewController alloc] init];
-        [self.navigationController pushViewController:surprizeController animated:YES];
         
+        [self presentViewController:surprizeController animated:YES completion:nil];        
         [aboutDialog close];
     }
 }

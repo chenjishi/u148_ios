@@ -54,15 +54,15 @@
         [titles addObject:@"注册"];
         
         [icons addObject:@"user_default.png"];
-        [icons addObject:@"ic_avatar_2.png"];
+        [icons addObject:@"ic_register.png"];
     }
     
     [titles addObject:@"收藏"];
     [titles addObject:@"反馈"];
     [titles addObject:@"关于"];
     
-    [icons addObject:@"ic_favorite_menu.png"];
-    [icons addObject:@"ic_star.png"];
+    [icons addObject:@"ic_nav_favorite"];
+    [icons addObject:@"ic_feedback.png"];
     [icons addObject:@"ic_info.png"];
     
     [menuTableView reloadData];

@@ -19,6 +19,8 @@ SlideMenuDelegate, UIAlertViewDelegate, MFMailComposeViewControllerDelegate, Tab
     BOOL isMenuShow;
     int clickCount;
     CustomIOS7AlertView *aboutDialog;
+    
+    UITapGestureRecognizer *tapRecognizer;
 }
 
 @property (nonatomic, readonly) UIView *contentView;

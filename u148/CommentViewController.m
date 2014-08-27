@@ -21,6 +21,8 @@
 #define COMMENT_URL @"http://www.u148.net/json/comment"
 #define LOGIN_URL @"http://www.u148.net/json/login"
 
+#define TAG_HUD 101
+
 @interface CommentViewController ()
 
 @end
@@ -30,64 +32,71 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor colorWithRed:241.0/255.0 green:241.0/255.0 blue:241.0/255.0 alpha:1];
+    self.view.backgroundColor = [UIColor colorWithRed:246.0f/255 green:246.0f/255 blue:246.0f/255 alpha:1];
+    self.title = @"";
     self.navigationController.navigationBar.topItem.title = @"评论";
     
-    self.user = [[UAccountManager sharedManager] getUserAccount];
+    mUser = [[UAccountManager sharedManager] getUserAccount];
     
-    self.page = 1;
-    self.dateFormatter = [[NSDateFormatter alloc] init];
-    [self.dateFormatter setDateFormat:@"yyyy-MM-dd"];
+    page = 1;
+    dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
     
-    self.comments = [[NSMutableArray alloc] initWithCapacity:0];
+    dataArray = [[NSMutableArray alloc] initWithCapacity:0];
     
-    self.commentTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - 44)
-                                                         style:UITableViewStylePlain];
-    self.commentTableView.dataSource = self;
-    self.commentTableView.delegate = self;
-    self.commentTableView.backgroundColor = [UIColor clearColor];
-    [self.commentTableView setSeparatorInset:UIEdgeInsetsZero];
-    [self.commentTableView setSeparatorColor:[UIColor colorWithRed:232.0/255.0 green:232.0/255.0 blue:232.0/255.0 alpha:1.0]];
+    mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - 44)
+                                              style:UITableViewStylePlain];
+    mTableView.dataSource = self;
+    mTableView.delegate = self;
+    mTableView.backgroundColor = [UIColor clearColor];
+    [mTableView setSeparatorInset:UIEdgeInsetsZero];
+    [mTableView setSeparatorColor:[UIColor colorWithRed:225.0f/255 green:225.0f/255 blue:225.0f/255 alpha:1]];
     
-    UIView *footView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44.0f)];
-    footView.backgroundColor = [UIColor clearColor];
+    mFootView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44.0f)];
+    mFootView.backgroundColor = [UIColor clearColor];
+    mFootView.hidden = YES;
     
-    UIButton *footButton = [[UIButton alloc] initWithFrame:footView.frame];
+    UIButton *footButton = [[UIButton alloc] initWithFrame:mFootView.frame];
     [footButton setTitle:@"加载更多" forState:UIControlStateNormal];
     [footButton setTitleColor:[UIColor colorWithRed:153.0/255.0 green:153.0/255.0 blue:153.0f/255.0 alpha:1.0]
                      forState:UIControlStateNormal];
+    [footButton setTitleColor:[UIColor colorWithRed:255.0/255.0 green:153.0/255.0 blue:0/255.0 alpha:1.0]
+                     forState:UIControlStateHighlighted];
     footButton.titleLabel.font = [UIFont systemFontOfSize:14.0f];
     [footButton addTarget:self action:@selector(loadMore) forControlEvents:UIControlEventTouchUpInside];
-    [footView addSubview:footButton];
+    [mFootView addSubview:footButton];
     
-    self.commentTableView.tableFooterView = footView;
+    mTableView.tableFooterView = mFootView;
     
-    [self.view addSubview:self.commentTableView];
+    [self.view addSubview:mTableView];
     
-    UIView *commentView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 44, self.view.bounds.size.width, 44)];
-    commentView.backgroundColor = [UIColor colorWithRed:241.0/255.0 green:241.0/255.0 blue:241.0/255.0 alpha:1];
-    commentView.userInteractionEnabled = YES;
+    UIView *dividerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 44 - 4, self.view.bounds.size.width, 4)];
     CAGradientLayer *topShadow = [CAGradientLayer layer];
     topShadow.frame = CGRectMake(0, 0, self.view.bounds.size.width, 4);
     topShadow.colors = [NSArray arrayWithObjects:(id)[[UIColor colorWithRed:0 green:0 blue:0 alpha:0.1f] CGColor],
                         [UIColor colorWithRed:0 green:0 blue:0 alpha:0.3f],nil];
     topShadow.startPoint = CGPointMake(0, 4);
     topShadow.endPoint = CGPointMake(0, 0);
-    [commentView.layer insertSublayer:topShadow above:0];
+    [dividerView.layer insertSublayer:topShadow above:0];
+    [self.view addSubview:dividerView];
+    
+    UIView *commentView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 44, self.view.bounds.size.width, 44)];
+    commentView.backgroundColor = [UIColor whiteColor];
+    commentView.userInteractionEnabled = YES;
     [self.view addSubview:commentView];
     
-    self.commentField = [[UITextField alloc] initWithFrame:CGRectMake(8, 0, self.view.bounds.size.width - 8 * 3 - 50, 44)];
-    self.commentField.clearButtonMode = UITextFieldViewModeWhileEditing;
-    self.commentField.backgroundColor = [UIColor clearColor];
-    self.commentField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    self.commentField.autocorrectionType = UITextAutocorrectionTypeNo;
-    self.commentField.autocapitalizationType = UITextAutocapitalizationTypeNone;
-    self.commentField.placeholder = @"写下你的评论";
-    self.commentField.delegate = self;
-    [commentView addSubview:self.commentField];
+    mTextField = [[UITextField alloc] initWithFrame:CGRectMake(8, 0, self.view.bounds.size.width - 8 * 3 - 50, 44)];
+    mTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    mTextField.backgroundColor = [UIColor clearColor];
+    mTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    mTextField.autocorrectionType = UITextAutocorrectionTypeNo;
+    mTextField.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    mTextField.placeholder = @"写下你的评论";
+    mTextField.delegate = self;
+    [commentView addSubview:mTextField];
     
     FUIButton *sendButton = [FUIButton buttonWithType:UIButtonTypeCustom];
-    sendButton.frame = CGRectMake(self.commentField.frame.origin.x + self.commentField.frame.size.width + 8,
+    sendButton.frame = CGRectMake(mTextField.frame.origin.x + mTextField.frame.size.width + 8,
                                   7, 50, 34);
     [sendButton setTitle:@"发送" forState:UIControlStateNormal];
     sendButton.titleLabel.font = [UIFont systemFontOfSize:14.0f];
@@ -103,26 +112,32 @@
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow:)
                                                  name:UIKeyboardWillShowNotification
-                                               object:self.view.window];
+                                               object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
-                                               object:self.view.window];
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardDidChange:)
+                                                 name:UIKeyboardDidChangeFrameNotification
+                                               object:nil];
+    
     [self request];
 }
 
 - (void)onCommentButtonClicked
 {
-    if (!self.user) {
-        [self performSelector:@selector(showLoginDialog) withObject:nil afterDelay:0.1];
-    } else{
-        NSString *content = self.commentField.text;
-        if ([content length] == 0) {
-            return;
-        } else {
-            [self sendComment:content];
+    NSString *content = mTextField.text;
+    BOOL hasContent = content && content.length > 0;
+    if (mUser && mUser.token && mUser.token.length > 0) {
+        if (hasContent) [self sendComment:content];
+    } else {
+        if (hasContent) {
+            [self performSelector:@selector(showLoginDialog) withObject:nil afterDelay:0.1];
         }
     }
+    
     [self hideKeyboard];
 }
 
@@ -159,61 +174,63 @@
 
 - (void)hideKeyboard
 {
-    [self.commentField resignFirstResponder];
+    [mTextField resignFirstResponder];
 }
 
 - (void)viewDidUnload
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
 }
 
 - (void)keyboardWillHide:(NSNotification *)n
 {
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
-    CGFloat screenWidth = screenRect.size.width;
-    CGFloat screenHeight = screenRect.size.height;
-    
-    CGRect viewFrame = CGRectMake(0, 0, screenWidth, screenHeight);
-    
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationBeginsFromCurrentState:YES];
-    [UIView setAnimationDuration:0.3];
-    [self.view setFrame:viewFrame];
-    [UIView commitAnimations];
-    
+    [self changeViewFrame:0];
     isKeyboardShow = NO;
 }
 
 - (void)keyboardWillShow:(NSNotification *)n
 {
-    if (isKeyboardShow) return;
-    
     NSDictionary *userInfo = [n userInfo];
-    
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGSize keyboardSize = [[userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
-    CGRect viewFrame = screenRect;
-    viewFrame.origin.y -= keyboardSize.height;
+    CGFloat offset = keyboardSize.height;
     
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationBeginsFromCurrentState:YES];
-    [UIView setAnimationDuration:0.3];
-    [self.view setFrame:viewFrame];
-    [UIView commitAnimations];
-    
+    [self changeViewFrame:offset];
     isKeyboardShow = YES;
+}
+
+- (void)keyboardDidChange:(NSNotification *)n
+{
+    if (isKeyboardShow) {
+        NSDictionary *userInfo = [n userInfo];
+        CGSize keyboardSize = [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
+        CGFloat offset = keyboardSize.height;
+        
+        [self changeViewFrame:offset];
+    }
+}
+
+- (void)changeViewFrame:(CGFloat)offset
+{
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGRect viewFrame = screenRect;
+    viewFrame.origin.y -= offset;
+    
+    [UIView animateWithDuration:0.3 animations:^{
+        [self.view setFrame:viewFrame];
+    }];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    [self.commentField resignFirstResponder];
+    [mTextField resignFirstResponder];
     return YES;
 }
 
 - (void)loadMore
 {
-    self.page++;
+    page++;
     [self request];
 }
 
@@ -235,8 +252,8 @@
             user.sexStr = [data objectForKey:@"sex"];
             user.token = [data objectForKey:@"token"];
             
-            self.user = user;
-            [[UAccountManager sharedManager] setUserAccount:self.user];
+            mUser = user;
+            [[UAccountManager sharedManager] setUserAccount:mUser];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"fail %@", error);
@@ -252,31 +269,43 @@
     
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithCapacity:0];
     [params setObject:self.articleId forKey:@"id"];
-    [params setObject:self.user.token forKey:@"token"];
-    [params setObject:[NSString stringWithFormat:@"%@(iPhone客户端)", content] forKey:@"content"];
-    if (self.replyId != nil) {
-        [params setObject:self.replyId forKey:@"review_id"];
+    [params setObject:mUser.token forKey:@"token"];
+    [params setObject:[NSString stringWithFormat:@"%@ (来自iPhone客户端)", content] forKey:@"content"];
+    if (replyId) {
+        [params setObject:replyId forKey:@"review_id"];
     }
     
-    [manager POST:[NSString stringWithFormat:COMMENT_URL] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self showToast:@"评论成功"];
-        self.replyId = nil;
-        self.commentField.placeholder = @"写下你的评论";
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        [self showToast:@"评论失败，稍后再试"];
-    }];
+    [manager POST:[NSString stringWithFormat:COMMENT_URL]
+       parameters:params
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              [self showToast:@"评论成功"];
+              replyId = nil;
+              mTextField.placeholder = @"写下你的评论";
+          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              [self showToast:@"评论失败，稍后再试"];
+          }];
 }
 
 - (void)showToast:(NSString *)tips
 {
 	MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.tag = TAG_HUD;
     
     hud.mode = MBProgressHUDModeText;
     hud.labelText = tips;
     
     hud.removeFromSuperViewOnHide = YES;
     
-    [hud hide:YES afterDelay:3];
+    [hud hide:YES afterDelay:2];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    UIView *hudView = [self.view viewWithTag:TAG_HUD];
+    if (hudView) {
+        [hudView removeFromSuperview];
+    }
 }
 
 - (void)request
@@ -285,7 +314,7 @@
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
     
-    [manager GET:[NSString stringWithFormat:BASE_URL, self.articleId, self.page]
+    [manager GET:[NSString stringWithFormat:BASE_URL, self.articleId, page]
       parameters:nil
          success:^(AFHTTPRequestOperation *operation, id responseObject) {
              
@@ -296,10 +325,16 @@
                  
                  for (NSDictionary *item in array) {
                      Comment *comment = [[Comment alloc] initWithDictionary:item];
-                     [self.comments addObject:comment];
+                     [dataArray addObject:comment];
                  }
                  
-                 [self.commentTableView reloadData];
+                 [mTableView reloadData];
+                 NSLog(@"## count %d", array.count);
+                 if (array.count >= 30) {
+                     mFootView.hidden = NO;
+                 } else {
+                     mFootView.hidden = YES;
+                 }
              }
          }
          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -309,12 +344,12 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.comments.count;
+    return dataArray.count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *text = [[self.comments objectAtIndex:indexPath.row] contents];
+    NSString *text = [[dataArray objectAtIndex:indexPath.row] contents];
     CGSize contraint = CGSizeMake(self.view.frame.size.width - 8 * 2 - 40 - 8, 2000.0f);
     
     CGRect textRect = [text boundingRectWithSize:contraint
@@ -331,7 +366,7 @@
     //we replace <br/> to line break, so we should add the height
     textHeight += matches * 14;
     
-    return textHeight + 10 * 2 + 8 + 14;
+    return textHeight + 12 * 2 + 8 + 14;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -342,11 +377,11 @@
         cell = [[CommentCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellId];
     }
     
-    Comment *comment = [self.comments objectAtIndex:indexPath.row];
+    Comment *comment = [dataArray objectAtIndex:indexPath.row];
     
     NSString *userName = comment.user.nickname;
     NSUInteger len = [userName length];
-    NSString *stringFromDate = [self.dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:[comment.createTime intValue]]];
+    NSString *stringFromDate = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:[comment.createTime intValue]]];
     NSMutableAttributedString *userInfo = [[NSMutableAttributedString alloc] initWithString:
                                            [NSString stringWithFormat:@"%@ %@", userName, stringFromDate]];
     [userInfo addAttribute:NSForegroundColorAttributeName
@@ -376,12 +411,12 @@
         replyContent = [replyContent stringByReplacingOccurrencesOfString:@"<blockquote>" withString:@""];
         replyContent = [replyContent stringByReplacingOccurrencesOfString:@"</blockquote>" withString:@""];
         
-        
-        NSMutableAttributedString *attributString = [[NSMutableAttributedString alloc] initWithString:
-                                                     [NSString stringWithFormat:@"%@\n%@", content, replyContent]];
+        NSString *result = [NSString stringWithFormat:@"%@\n%@", content, replyContent];
+        NSMutableAttributedString *attributString = [[NSMutableAttributedString alloc] initWithString:result];
         [attributString addAttribute:NSForegroundColorAttributeName
                                value:[UIColor colorWithRed:153.0/255.0 green:153.0/255.0 blue:153.0/255.0 alpha:1.0]
                                range:NSMakeRange(content.length, replyContent.length + 1)];
+        
         cell.detailTextLabel.attributedText = attributString;
     } else {
         content = [content stringByReplacingOccurrencesOfString:@"<br />" withString:@"\n"];
@@ -398,9 +433,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    Comment *comment = [self.comments objectAtIndex:indexPath.row];
-    self.replyId = comment.userId;
-    self.commentField.placeholder = [NSString stringWithFormat:@"回复:%@", comment.user.nickname];
+    Comment *comment = [dataArray objectAtIndex:indexPath.row];
+    replyId = comment.commentId;
+    mTextField.placeholder = [NSString stringWithFormat:@"回复:%@", comment.user.nickname];
 }
 
 - (void)didReceiveMemoryWarning

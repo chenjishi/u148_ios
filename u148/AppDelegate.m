@@ -15,15 +15,16 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    sleep(2);
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
     NSArray *types = [NSArray arrayWithObjects:[NSNumber numberWithUnsignedInteger:0],
                       [NSNumber numberWithUnsignedInteger:3],
                       [NSNumber numberWithUnsignedInteger:6],
                       [NSNumber numberWithUnsignedInteger:7],
-                      [NSNumber numberWithUnsignedInteger:5],
-                      [NSNumber numberWithUnsignedInteger:8],
                       [NSNumber numberWithUnsignedInteger:9],
+                      [NSNumber numberWithUnsignedInteger:8],
+                      [NSNumber numberWithUnsignedInteger:5],
                       nil];
     NSMutableArray *viewControllers = [[NSMutableArray alloc] initWithCapacity:6];
     for (NSUInteger i = 0; i < 6; i++) {

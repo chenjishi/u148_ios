@@ -17,7 +17,7 @@
         self.textLabel.font = [UIFont boldSystemFontOfSize:15.0];
         self.textLabel.textColor = [UIColor colorWithRed:51.0/255.0 green:51.0/255.0 blue:51.0/255.0 alpha:1.0];
         
-        self.detailTextLabel.font = [UIFont systemFontOfSize:12.0];
+        self.detailTextLabel.font = [UIFont systemFontOfSize:13.0];
         self.detailTextLabel.textColor = [UIColor colorWithRed:153.0/255.0 green:153.0/255.0 blue:153.0f/255.0 alpha:1.0];
         
         self.reviewsLabel = [[UILabel alloc] init];
@@ -35,7 +35,7 @@
 {
     [super layoutSubviews];
     
-    CGRect rect = CGRectMake(8, 8, 80, 87);
+    CGRect rect = CGRectMake(8, 16, 80, 87);
     self.imageView.frame = rect;
     
     int x = rect.origin.x + rect.size.width + 8;
@@ -49,11 +49,7 @@
     self.detailTextLabel.numberOfLines = 2;
     [self.detailTextLabel sizeToFit];
     
-    self.reviewsLabel.frame = CGRectMake(x, self.frame.size.height - 8 - 12, self.frame.size.width - x - 8, 12);
-}
-
-- (void)awakeFromNib
-{
+    self.reviewsLabel.frame = CGRectMake(x, self.frame.size.height - 16 - 12, self.frame.size.width - x - 8, 12);
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated

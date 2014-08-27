@@ -21,7 +21,8 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    CGRect stripRect = CGRectMake(0, self.frame.size.height - 4, self.frame.size.width, 4);
+    CGFloat width = self.frame.size.width / 2;
+    CGRect stripRect = CGRectMake((self.frame.size.width - width) / 2, self.frame.size.height - 4, width, 4);
     CGContextRef context = UIGraphicsGetCurrentContext();
     UIColor *color = [UIColor colorWithRed:255.0/255.0 green:153.0/255.0 blue:0/255.0 alpha:1.0];
     CGContextSetFillColorWithColor(context, color.CGColor);

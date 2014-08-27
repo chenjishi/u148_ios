@@ -10,4 +10,17 @@
 
 @implementation Bubble
 
+- (id)initWidthDictionary:(NSDictionary *)dict
+{
+    {
+        self = [super init];
+        if (self) {
+            self.title = [dict objectForKey:@"title"];
+            self.image = [dict objectForKey:@"image"];
+        }
+        
+        return self;
+    }
+}
+
 @end

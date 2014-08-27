@@ -14,10 +14,15 @@
 #import "PhotoViewController.h"
 #import "CommentViewController.h"
 #import "MBProgressHUD.h"
+#import "WXApi.h"
+#import "UIImageView+AFNetworking.h"
 
 #define BASE_URL @"http://www.u148.net/json/article/%@"
 #define URL_FAVORITE_ADD @"http://www.u148.net/json/favourite"
 #define LOGIN_URL @"http://www.u148.net/json/login"
+
+#define TAG_SHARE_SESSION 101
+#define TAG_SHARE_FRIENDS 102
 
 @interface DetailViewController ()
 
@@ -30,43 +35,135 @@
 {
     [super viewDidLoad];
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
-    self.view.backgroundColor = [UIColor colorWithRed:241.0/255.0 green:241.0/255.0 blue:241.0/255.0 alpha:1];
+    self.view.backgroundColor = [UIColor colorWithRed:246.0f/255 green:246.0f/255 blue:246.0f/255 alpha:1.0f];
     
     UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [commentButton setImage:[UIImage imageNamed:@"ic_comment.png"] forState:UIControlStateNormal];
+    [commentButton setImage:[UIImage imageNamed:@"ic_nav_cmt.png"] forState:UIControlStateNormal];
     [commentButton addTarget:self action:@selector(startComment) forControlEvents:UIControlEventTouchUpInside];
-    commentButton.frame = CGRectMake(0, 0, 34, 34);
+    commentButton.frame = CGRectMake(0, 0, 26, 26);
     UIBarButtonItem *commentItem = [[UIBarButtonItem alloc] initWithCustomView:commentButton];
     
     UIButton *favoriteButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [favoriteButton setImage:[UIImage imageNamed:@"ic_favorite.png"] forState:UIControlStateNormal];
-    favoriteButton.frame = CGRectMake(0, 0, 34, 34);
+    [favoriteButton setImage:[UIImage imageNamed:@"ic_nav_favorite.png"] forState:UIControlStateNormal];
+    favoriteButton.frame = CGRectMake(0, 0, 26, 26);
     [favoriteButton addTarget:self action:@selector(onFavoriteButtonCliked) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *favoriteItem = [[UIBarButtonItem alloc] initWithCustomView:favoriteButton];
     
-    self.navigationItem.rightBarButtonItems = @[commentItem, favoriteItem];
+    UIButton *shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [shareButton setImage:[UIImage imageNamed:@"ic_nav_share.png"] forState:UIControlStateNormal];
+    shareButton.frame = CGRectMake(0, 0, 26, 26);
+    [shareButton addTarget:self action:@selector(onShareButtonClicked) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *shareItem = [[UIBarButtonItem alloc] initWithCustomView:shareButton];
     
-    NSDictionary *titles = [NSDictionary dictionaryWithObjectsAndKeys:
-                            @"首页", [NSNumber numberWithInt:0],
-                            @"图画", [NSNumber numberWithInt:3],
-                            @"文字", [NSNumber numberWithInt:6],
-                            @"杂粹", [NSNumber numberWithInt:7],
-                            @"集市", [NSNumber numberWithInt:9],
-                            @"漂流", [NSNumber numberWithInt:8],
-                            @"游戏", [NSNumber numberWithInt:4],
-                            @"影像", [NSNumber numberWithInt:2],
-                            @"音频", [NSNumber numberWithInt:5],  nil];
+    self.navigationItem.rightBarButtonItems = @[commentItem, favoriteItem, shareItem];
     
-    self.navigationController.navigationBar.topItem.title = [titles objectForKey:[NSNumber numberWithInt:self.feed.category]];
+    tags = [NSDictionary dictionaryWithObjectsAndKeys:
+            @"首页", [NSNumber numberWithInt:0],
+            @"图画", [NSNumber numberWithInt:3],
+            @"文字", [NSNumber numberWithInt:6],
+            @"杂粹", [NSNumber numberWithInt:7],
+            @"集市", [NSNumber numberWithInt:9],
+            @"漂流", [NSNumber numberWithInt:8],
+            @"游戏", [NSNumber numberWithInt:4],
+            @"影像", [NSNumber numberWithInt:2],
+            @"音频", [NSNumber numberWithInt:5],  nil];
+    
+    self.navigationController.navigationBar.topItem.title = [tags objectForKey:[NSNumber numberWithInt:self.feed.category]];
+    
     
     self.webview = [[UIWebView alloc] initWithFrame:self.view.frame];
     self.webview.delegate = self;
     [self.view addSubview:self.webview];
-
+    
+    [WXApi registerApp:@"wxf862baa09e0df157" withDescription:@"有意思吧"];
+    
     
     [self renderPage:@"正在加载..."];
     
+    weixinScene = 0;
+    
     [self request];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationItem.title = @"";
+}
+
+- (void)onShareButtonClicked
+{
+    [self showShareDialog];
+}
+
+- (void)shareToWeixin:(id)sender
+{
+    UIButton *button = (UIButton*) sender;
+    int scene = button.tag;
+    
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
+    [imageView setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:_feed.picMin]]
+                     placeholderImage:[UIImage imageNamed:@"ic_place_holder.png"]
+                              success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+                                  [self sendToWeixin:image withType:scene];
+                              }
+                              failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
+                              }];
+    [shareDialog close];
+}
+
+- (void)showShareDialog
+{
+    if (!shareDialog) {
+        shareDialog = [[CustomIOS7AlertView alloc] init];
+        
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 100)];
+        
+        UIButton *button1 = [[UIButton alloc] initWithFrame:CGRectMake(20, 20, 70, 70)];
+        button1.tag = TAG_SHARE_SESSION;
+        [button1 setImage:[UIImage imageNamed:@"ic_session.png"] forState:UIControlStateNormal];
+        [button1 addTarget:self action:@selector(shareToWeixin:) forControlEvents:UIControlEventTouchUpInside];
+        [view addSubview:button1];
+        
+        UIButton *button2 = [[UIButton alloc] initWithFrame:CGRectMake(110, 20, 70, 70)];
+        button2.tag = TAG_SHARE_FRIENDS;
+        [button2 setImage:[UIImage imageNamed:@"ic_friend.png"] forState:UIControlStateNormal];
+        [button2 addTarget:self action:@selector(shareToWeixin:) forControlEvents:UIControlEventTouchUpInside];
+        [view addSubview:button2];
+        
+        [shareDialog setContainerView:view];
+        [shareDialog setButtonTitles:[NSArray arrayWithObject:@"关闭"]];
+        [shareDialog setUseMotionEffects:YES];
+        [shareDialog setDelegate:self];
+    }
+    
+    [shareDialog show];
+}
+
+- (void)customIOS7dialogButtonTouchUpInside:(id)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    [shareDialog close];
+}
+
+- (void)sendToWeixin:(UIImage *) image withType:(int)scene
+{
+    WXMediaMessage *message = [WXMediaMessage message];
+    message.title = _feed.title;
+    message.description = _feed.summary;
+    [message setThumbImage:image];
+    
+    WXWebpageObject *ext = [WXWebpageObject object];
+    ext.webpageUrl = [NSString stringWithFormat:@"http://www.u148.net/article/%@.html", _feed.feedId];
+    
+    message.mediaObject = ext;
+    SendMessageToWXReq *req = [[SendMessageToWXReq alloc] init];
+    req.bText = NO;
+    req.message = message;
+    req.scene = scene == TAG_SHARE_SESSION ? WXSceneSession : WXSceneTimeline;
+    
+    [WXApi sendReq:req];
+    
+    [shareDialog close];
 }
 
 - (void)request
@@ -223,10 +320,10 @@
     }
     
     htmlString = [htmlString stringByReplacingOccurrencesOfString:@"{U_AUTHOR}" withString:author];
-    htmlString = [htmlString stringByReplacingOccurrencesOfString:@"{U_COMMENT}" withString:reviews];    
+    htmlString = [htmlString stringByReplacingOccurrencesOfString:@"{U_COMMENT}" withString:reviews];
     htmlString = [htmlString stringByReplacingOccurrencesOfString:@"{CONTENT}" withString:content];
     
-    [self.webview loadHTMLString:htmlString baseURL:url];    
+    [self.webview loadHTMLString:htmlString baseURL:url];
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
@@ -235,10 +332,10 @@
         
         NSArray *array = [[[request URL] absoluteString] componentsSeparatedByString:@"&"];
         
-        NSLog(@"%@", [array objectAtIndex:0]);
-        NSLog(@"%@", [array objectAtIndex:1]);
         PhotoViewController *photoController = [[PhotoViewController alloc] init];
-        [self.navigationController pushViewController:photoController animated:YES];
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:photoController];
+        photoController.imageUrl = [array objectAtIndex:1];
+        [self presentViewController:nav animated:YES completion:nil];
         return NO;
         
     }

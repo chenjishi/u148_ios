@@ -20,9 +20,9 @@
     self = [super initWithFrame:frame];
     if (self) {
         
-        self.titles = [NSArray arrayWithObjects:@"首页", @"图画", @"文字", @"杂粹", @"音频", @"漂流", nil];
+        self.titles = [NSArray arrayWithObjects:@"首页", @"图画", @"文字", @"杂粹", @"集市", @"漂流", nil];
         
-        self.backgroundColor = [UIColor colorWithRed:229.0/255.0 green:229.0/255.0 blue:229.0/255.0 alpha:1.0];
+        self.backgroundColor = [UIColor colorWithRed:240.0f/255 green:240.0f/255 blue:240.0f/255 alpha:1.0];
         
         NSUInteger count = self.titles.count;
         tabWidth = frame.size.width * 1.0f / count;

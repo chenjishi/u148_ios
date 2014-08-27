@@ -9,13 +9,15 @@
 #import <UIKit/UIKit.h>
 
 @interface FeedsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+{
+    NSMutableArray *dataArray;
+    NSMutableParagraphStyle *paragraphStyle;
+    NSDictionary *categories;
+    UITableView *mTableView;
+    UIView *mFootView;
+    int page;
+}
 
-@property (nonatomic, retain) UITableView *feedsTable;
-@property (nonatomic, retain) NSMutableArray *feeds;
-
-@property (nonatomic, retain) NSDictionary *categories;
-
-@property (nonatomic, assign) NSInteger page;
 @property (nonatomic, assign) NSUInteger categoryType;
 
 @end

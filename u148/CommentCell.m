@@ -28,7 +28,7 @@
 {
     [super layoutSubviews];
     
-    CGRect rect = CGRectMake(8, 10, 40, 40);
+    CGRect rect = CGRectMake(8, 12, 40, 40);
     self.imageView.frame = rect;
     
     CGFloat x = rect.origin.x + rect.size.width + 8;

@@ -18,7 +18,11 @@
     if (self) {
         self.commentId = [dict objectForKey:@"id"];
         //remove html tags
-        self.contents = [[dict objectForKey:@"contents"] stringByDecodingHTMLEntities];   
+        self.contents = [[dict objectForKey:@"contents"] stringByDecodingHTMLEntities];
+        
+        NSString *content = [[dict objectForKey:@"contents"] stringByDecodingHTMLEntities];
+        self.contents = [content stringByReplacingOccurrencesOfString:@"(来自Android客户端)" withString:@""];
+        self.contents = [self.contents stringByReplacingOccurrencesOfString:@"(来自iPhone客户端)" withString:@""];
         
         NSDictionary *userObj = [dict objectForKey:@"usr"];
         User *user = [[User alloc] init];

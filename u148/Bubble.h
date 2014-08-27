@@ -10,4 +10,9 @@
 
 @interface Bubble : NSObject
 
+@property (nonatomic, strong) NSString *title;
+@property (nonatomic, strong) NSString *image;
+
+- (id)initWidthDictionary:(NSDictionary *)dict;
+
 @end

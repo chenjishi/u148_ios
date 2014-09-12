@@ -9,10 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface RegisterViewController : UIViewController <UITextFieldDelegate>
-{
-    UITextField *emailField;
-    UITextField *passwordField;
-    UITextField *nameField;
-}
 
 @end

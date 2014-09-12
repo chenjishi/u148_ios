@@ -13,10 +13,16 @@
 #import "User.h"
 #import "UAccountManager.h"
 #import "AFHTTPRequestOperationManager.h"
+#import "PrivacyViewController.h"
 
-#define URL_REGISTER @"http://www.u148.net/json/register"
+#define URL_REGISTER @"http://api.u148.net/json/register"
 
 @interface RegisterViewController ()
+{
+    UITextField *emailField;
+    UITextField *passwordField;
+    UITextField *nameField;
+}
 
 @end
 
@@ -26,8 +32,6 @@
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor colorWithRed:241.0/255.0 green:241.0/255.0 blue:241.0/255.0 alpha:1];
-    
-    //    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:nil];
     self.navigationController.navigationBar.topItem.title = @"";
     
     self.title = @"用户注册";
@@ -53,7 +57,7 @@
     CGRect rect4 = CGRectMake(8, rect3.origin.y + rect3.size.height + 16, self.view.frame.size.width - 16, 44);
     FUIButton *button = [FUIButton buttonWithType:UIButtonTypeCustom];
     button.frame = rect4;
-    [button setTitle:@"注  册" forState:UIControlStateNormal];
+    [button setTitle:@"完  成" forState:UIControlStateNormal];
     button.titleLabel.font = [UIFont systemFontOfSize:16.0f];
     button.buttonColor = [UIColor colorWithRed:255.0/255.0 green:153.0/255.0 blue:0/255.0 alpha:1.0];
     button.shadowColor = [UIColor colorWithRed:230.0/255.0 green:138.0/255.0 blue:1/255.0 alpha:1.0];
@@ -61,6 +65,30 @@
     button.cornerRadius = 4.0f;
     [button addTarget:self action:@selector(onSubmitButtonClicked) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:button];
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(16, rect4.origin.y + rect4.size.height + 8, self.view.frame.size.width - 32, 12)];
+    label.backgroundColor = [UIColor clearColor];
+    label.font = [UIFont systemFontOfSize:12.0f];
+    label.textAlignment = NSTextAlignmentCenter;
+    label.textColor = [UIColor colorWithRed:102.0f/255 green:102.0f/255 blue:102.0f/255 alpha:1.0f];
+    label.text = @"点击「完成」按钮，代表你已阅读并同意";
+    [self.view addSubview:label];
+    
+    UIButton *privacyButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    privacyButton.frame = CGRectMake((self.view.frame.size.width - 80) / 2,
+                                     label.frame.size.height + label.frame.origin.y + 16, 80, 14.f);
+    [privacyButton setTitle:@"注册条款" forState:UIControlStateNormal];
+    privacyButton.titleLabel.font = [UIFont systemFontOfSize:14.0f];
+    [privacyButton setTitleColor:[UIColor colorWithRed:51.0f/255 green:102.0f/255 blue:153.0f/255 alpha:1.0f]
+                        forState:UIControlStateNormal];
+    [privacyButton addTarget:self action:@selector(onPrivacyClicked) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:privacyButton];
+}
+
+- (void)onPrivacyClicked
+{
+    PrivacyViewController *viewController = [[PrivacyViewController alloc] init];
+    [self.navigationController pushViewController:viewController animated:YES];
 }
 
 - (void)onSubmitButtonClicked
@@ -105,9 +133,9 @@
 {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
-    NSDictionary *params = @{@"email" : email, @"password" : password, @"nickname" : name};
+    NSDictionary *params = @{@"email" : email, @"password" : password, @"nickname" : name, @"client" : @"iPhone"};
     [manager POST:[NSString stringWithFormat:URL_REGISTER]
        parameters:params
           success:^(AFHTTPRequestOperation *operation, id responseObject) {

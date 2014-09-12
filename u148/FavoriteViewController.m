@@ -14,8 +14,8 @@
 #import "DetailViewController.h"
 #import "Feed.h"
 
-#define URL_FAVORITE @"http://www.u148.net/json/get_favourite/0/%d?token=%@"
-#define URL_FAVORITE_DELETE @"http://www.u148.net/json/del_favourite"
+#define URL_FAVORITE @"http://api.u148.net/json/get_favourite/0/%d?token=%@"
+#define URL_FAVORITE_DELETE @"http://api.u148.net/json/del_favourite?id=%@&token=%@"
 
 @interface FavoriteViewController ()
 
@@ -57,7 +57,7 @@
 {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
     [manager GET:[NSString stringWithFormat:URL_FAVORITE, page, userToken]
       parameters:nil
@@ -77,7 +77,6 @@
          }
          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
              NSLog(@"error %@", error);
-             
          }];
 }
 
@@ -85,17 +84,16 @@
 {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
     User *user = [[UAccountManager sharedManager] getUserAccount];
-    NSDictionary *params = @{@"id" : feedId, @"token" : user.token};
     
-    [manager POST:[NSString stringWithFormat:URL_FAVORITE_DELETE]
-       parameters:params
-          success:^(AFHTTPRequestOperation *operation, id responseObject) {
-          }
-          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-          }];
+    [manager GET:[NSString stringWithFormat:URL_FAVORITE_DELETE, feedId, user.token]
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+         }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+         }];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -162,10 +160,5 @@
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return YES;
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
 }
 @end

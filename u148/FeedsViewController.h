@@ -8,15 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface FeedsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
-{
-    NSMutableArray *dataArray;
-    NSMutableParagraphStyle *paragraphStyle;
-    NSDictionary *categories;
-    UITableView *mTableView;
-    UIView *mFootView;
-    int page;
-}
+@interface FeedsViewController : UITableViewController
 
 @property (nonatomic, assign) NSUInteger categoryType;
 

@@ -15,10 +15,11 @@
     NSDictionary *tags;
     CustomIOS7AlertView *shareDialog;
     
+    UIWebView *webView;
+    
     int weixinScene;
 }
 
-@property (nonatomic, strong) UIWebView *webview;
 @property (nonatomic, strong) Feed *feed;
 
 @end

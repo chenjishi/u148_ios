@@ -17,9 +17,9 @@
 #import "MBProgressHUD.h"
 #import "FUIButton.h"
 
-#define BASE_URL @"http://www.u148.net/json/get_comment/%@/%i"
-#define COMMENT_URL @"http://www.u148.net/json/comment"
-#define LOGIN_URL @"http://www.u148.net/json/login"
+#define BASE_URL @"http://api.u148.net/json/get_comment/%@/%i"
+#define COMMENT_URL @"http://api.u148.net/json/comment"
+#define LOGIN_URL @"http://api.u148.net/json/login"
 
 #define TAG_HUD 101
 
@@ -265,7 +265,7 @@
 {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithCapacity:0];
     [params setObject:self.articleId forKey:@"id"];
@@ -312,7 +312,7 @@
 {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
     [manager GET:[NSString stringWithFormat:BASE_URL, self.articleId, page]
       parameters:nil
@@ -329,7 +329,6 @@
                  }
                  
                  [mTableView reloadData];
-                 NSLog(@"## count %d", array.count);
                  if (array.count >= 30) {
                      mFootView.hidden = NO;
                  } else {

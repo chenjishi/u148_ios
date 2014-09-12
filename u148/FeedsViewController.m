@@ -13,9 +13,20 @@
 #import "FeedCell.h"
 #import "DetailViewController.h"
 
-#define BASE_URL @"http://www.u148.net/json/%i/%i"
+#define BASE_URL @"http://api.u148.net/json/%i/%i"
+
+static NSString* const feedCellIdentifier = @"feedCell";
 
 @interface FeedsViewController ()
+{
+    NSMutableArray *dataArray;
+    NSMutableParagraphStyle *paragraphStyle;
+    NSDictionary *categories;
+    
+    UIRefreshControl *refreshControl;
+    UIView *mFootView;
+    int page;
+}
 
 @end
 
@@ -31,27 +42,21 @@
     page = 1;
     
     categories = [NSDictionary dictionaryWithObjectsAndKeys:
-                       @"首页", [NSNumber numberWithInt:0],
-                       @"图画", [NSNumber numberWithInt:3],
-                       @"文字", [NSNumber numberWithInt:6],
-                       @"杂粹", [NSNumber numberWithInt:7],
-                       @"集市", [NSNumber numberWithInt:9],
-                       @"漂流", [NSNumber numberWithInt:8],
-                       @"游戏", [NSNumber numberWithInt:4],
-                       @"影像", [NSNumber numberWithInt:2],
-                       @"音频", [NSNumber numberWithInt:5],  nil];
-
+                  @"首页", [NSNumber numberWithInt:0],
+                  @"图画", [NSNumber numberWithInt:3],
+                  @"文字", [NSNumber numberWithInt:6],
+                  @"杂粹", [NSNumber numberWithInt:7],
+                  @"集市", [NSNumber numberWithInt:9],
+                  @"漂流", [NSNumber numberWithInt:8],
+                  @"游戏", [NSNumber numberWithInt:4],
+                  @"影像", [NSNumber numberWithInt:2],
+                  @"音频", [NSNumber numberWithInt:5],  nil];
     
-    CGRect rect = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - 64 - 36);
-    mTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
-    mTableView.backgroundColor = [UIColor clearColor];
-    mTableView.dataSource = self;
-    mTableView.delegate = self;
-    [mTableView setSeparatorInset:UIEdgeInsetsZero];
-    [mTableView setSeparatorColor:[UIColor colorWithRed:225.0f/255 green:225.0f/255 blue:225.0f/255 alpha:1]];
-    [self.view addSubview:mTableView];
+    self.tableView.backgroundColor = [UIColor clearColor];
+    [self.tableView setSeparatorInset:UIEdgeInsetsZero];
+    [self.tableView setSeparatorColor:[UIColor colorWithRed:225.0f/255 green:225.0f/255 blue:225.0f/255 alpha:1]];
     
-    mFootView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, mTableView.frame.size.width, 44.0f)];
+    mFootView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44.0f)];
     mFootView.backgroundColor = [UIColor clearColor];
     mFootView.hidden = YES;
     
@@ -65,8 +70,19 @@
     [footButton addTarget:self action:@selector(loadMore) forControlEvents:UIControlEventTouchUpInside];
     [mFootView addSubview:footButton];
     
-    mTableView.tableFooterView = mFootView;
+    self.tableView.tableFooterView = mFootView;
     
+    refreshControl = [[UIRefreshControl alloc] init];
+    [self.tableView addSubview:refreshControl];
+    [refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
+    
+    [self request];
+}
+
+- (void)refreshTable
+{
+    page = 1;
+    [dataArray removeAllObjects];
     [self request];
 }
 
@@ -80,7 +96,7 @@
 {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
     [manager GET:[NSString stringWithFormat:BASE_URL, self.categoryType, page]
       parameters:nil
@@ -96,7 +112,9 @@
                      [dataArray addObject:feed];
                  }
                  
-                 [mTableView reloadData];
+                 [refreshControl endRefreshing];
+                 [self.tableView reloadData];
+
                  if (array.count >= 10) {
                      mFootView.hidden = NO;
                  } else {
@@ -134,12 +152,10 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *cellId = @"feedCell";
-    
-    FeedCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
+    FeedCell *cell = [tableView dequeueReusableCellWithIdentifier:feedCellIdentifier];
     
     if (!cell) {
-        cell = [[FeedCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellId];
+        cell = [[FeedCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:feedCellIdentifier];
     }
     
     Feed *feed = [dataArray objectAtIndex:indexPath.row];
@@ -155,7 +171,7 @@
     [cell.imageView setImageWithURL:[NSURL URLWithString:feed.picMin] placeholderImage:[UIImage imageNamed:@"ic_place_holder.png"]];
     cell.textLabel.attributedText = title;
     
-  
+    
     NSMutableAttributedString *summary = [[NSMutableAttributedString alloc] initWithString:feed.summary];
     [summary addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [feed.summary length])];
     cell.detailTextLabel.attributedText = summary;

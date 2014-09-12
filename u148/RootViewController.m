@@ -17,7 +17,7 @@
 #import "SurprizeViewController.h"
 #import "RegisterViewController.h"
 
-#define LOGIN_URL @"http://www.u148.net/json/login"
+#define LOGIN_URL @"http://api.u148.net/json/login"
 
 @interface RootViewController ()
 
@@ -38,7 +38,7 @@
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];    
+    [super viewDidLoad];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     
     UIButton *menuButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -136,27 +136,29 @@
 {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
     NSDictionary *params = @{@"email" : name, @"password" : password};
-    [manager POST:[NSString stringWithFormat:LOGIN_URL] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *dict = (NSDictionary *) responseObject;
-            NSDictionary *data = [dict objectForKey:@"data"];
-            
-            User *user = [User alloc];
-            user.icon = [data objectForKey:@"icon"];
-            user.nickname = [data objectForKey:@"nickname"];
-            user.sexStr = [data objectForKey:@"sex"];
-            user.token = [data objectForKey:@"token"];
-            
-            [[UAccountManager sharedManager] setUserAccount:user];
-            [self.menuViewController refreshMenu];
-            [self showToast:@"登陆成功"];
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        [self showToast:@"登陆失败，请检查用户名或密码，或者网络:)"];
-    }];
+    [manager POST:[NSString stringWithFormat:LOGIN_URL]
+       parameters:params
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                  NSDictionary *dict = (NSDictionary *) responseObject;
+                  NSDictionary *data = [dict objectForKey:@"data"];
+                  
+                  User *user = [User alloc];
+                  user.icon = [data objectForKey:@"icon"];
+                  user.nickname = [data objectForKey:@"nickname"];
+                  user.sexStr = [data objectForKey:@"sex"];
+                  user.token = [data objectForKey:@"token"];
+                  
+                  [[UAccountManager sharedManager] setUserAccount:user];
+                  [self.menuViewController refreshMenu];
+                  [self showToast:@"登陆成功"];
+              }
+          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              [self showToast:@"登陆失败，请检查用户名或密码，或者网络:)"];
+          }];
 }
 
 - (void)showToast:(NSString *)tips
@@ -347,7 +349,7 @@
         clickCount = 0;
         SurprizeViewController *surprizeController = [[SurprizeViewController alloc] init];
         
-        [self presentViewController:surprizeController animated:YES completion:nil];        
+        [self presentViewController:surprizeController animated:YES completion:nil];
         [aboutDialog close];
     }
 }
@@ -360,6 +362,8 @@
         NSUInteger index = [self.controllers indexOfObject:viewController];
         CGRect frame = viewController.view.frame;
         frame.origin.x = self.view.frame.size.width * index;
+        frame.origin.y = 0;
+        frame.size.height = self.view.frame.size.height - 64 - 36;
         viewController.view.frame = frame;
     }
 }

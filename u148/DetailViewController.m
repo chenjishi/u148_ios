@@ -17,9 +17,9 @@
 #import "WXApi.h"
 #import "UIImageView+AFNetworking.h"
 
-#define BASE_URL @"http://www.u148.net/json/article/%@"
-#define URL_FAVORITE_ADD @"http://www.u148.net/json/favourite"
-#define LOGIN_URL @"http://www.u148.net/json/login"
+#define BASE_URL @"http://api.u148.net/json/article/%@"
+#define URL_FAVORITE_ADD @"http://api.u148.net/json/favourite?id=%@&token=%@"
+#define LOGIN_URL @"http://api.u148.net/json/login"
 
 #define TAG_SHARE_SESSION 101
 #define TAG_SHARE_FRIENDS 102
@@ -71,9 +71,9 @@
     self.navigationController.navigationBar.topItem.title = [tags objectForKey:[NSNumber numberWithInt:self.feed.category]];
     
     
-    self.webview = [[UIWebView alloc] initWithFrame:self.view.frame];
-    self.webview.delegate = self;
-    [self.view addSubview:self.webview];
+    webView = [[UIWebView alloc] initWithFrame:self.view.frame];
+    webView.delegate = self;
+    [self.view addSubview:webView];
     
     [WXApi registerApp:@"wxf862baa09e0df157" withDescription:@"有意思吧"];
     
@@ -170,7 +170,7 @@
 {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
     [manager GET:[NSString stringWithFormat:BASE_URL, _feed.feedId]
       parameters:nil
@@ -210,26 +210,28 @@
 {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
     NSDictionary *params = @{@"email" : name, @"password" : password};
-    [manager POST:[NSString stringWithFormat:LOGIN_URL] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *dict = (NSDictionary *) responseObject;
-            NSDictionary *data = [dict objectForKey:@"data"];
-            
-            User *user = [User alloc];
-            user.icon = [data objectForKey:@"icon"];
-            user.nickname = [data objectForKey:@"nickname"];
-            user.sexStr = [data objectForKey:@"sex"];
-            user.token = [data objectForKey:@"token"];
-            
-            [[UAccountManager sharedManager] setUserAccount:user];
-            [self showToast:@"登陆成功"];
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        [self showToast:@"登陆失败，请检查用户名或密码，或者网络:)"];
-    }];
+    [manager POST:[NSString stringWithFormat:LOGIN_URL]
+       parameters:params
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                  NSDictionary *dict = (NSDictionary *) responseObject;
+                  NSDictionary *data = [dict objectForKey:@"data"];
+                  
+                  User *user = [User alloc];
+                  user.icon = [data objectForKey:@"icon"];
+                  user.nickname = [data objectForKey:@"nickname"];
+                  user.sexStr = [data objectForKey:@"sex"];
+                  user.token = [data objectForKey:@"token"];
+                  
+                  [[UAccountManager sharedManager] setUserAccount:user];
+                  [self showToast:@"登陆成功"];
+              }}
+          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              [self showToast:@"登陆失败，请检查用户名或密码，或者网络:)"];
+          }];
 }
 
 - (void)showToast:(NSString *)tips
@@ -276,18 +278,15 @@
 {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
-    NSDictionary *params = @{@"id" : _feed.feedId, @"token" : userToken};
-    
-    [manager POST:[NSString stringWithFormat:URL_FAVORITE_ADD]
-       parameters:params
-          success:^(AFHTTPRequestOperation *operation, id responseObject) {
-              [self showToast:@"已移入收藏夹"];
-          }
-          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-              [self showToast:@"服务器繁忙，请稍后再试"];
-          }];
+    [manager GET:[NSString stringWithFormat:URL_FAVORITE_ADD, _feed.feedId, userToken]
+      parameters:nil
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             [self showToast:@"已移入收藏夹"];}
+         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             [self showToast:@"服务器繁忙，请稍后再试"];}
+     ];
 }
 
 - (void)startComment
@@ -323,7 +322,7 @@
     htmlString = [htmlString stringByReplacingOccurrencesOfString:@"{U_COMMENT}" withString:reviews];
     htmlString = [htmlString stringByReplacingOccurrencesOfString:@"{CONTENT}" withString:content];
     
-    [self.webview loadHTMLString:htmlString baseURL:url];
+    [webView loadHTMLString:htmlString baseURL:url];
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
@@ -342,8 +341,4 @@
     return YES;
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-}
 @end

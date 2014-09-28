@@ -11,6 +11,7 @@
 #import "UIImageView+AFNetworking.h"
 #import "AFHTTPRequestOperationManager.h"
 #import "Bubble.h"
+#import <AudioToolbox/AudioToolbox.h>
 
 @import AVFoundation;
 
@@ -144,7 +145,7 @@
     shakeLabel.alpha = 1.0f;
 }
 
-- (void) playWaterSoundOnBackground
+- (void)playWaterSoundOnBackground
 {
     if (waterPlayer) {
         waterPlayer = nil;
@@ -237,6 +238,7 @@
 {
     NSString *path = [[NSBundle mainBundle] pathForResource:@"bubble" ofType:@"wav"];
     NSURL *pewPewURL = [NSURL fileURLWithPath:path];
+    NSLog(@"pewPewURL %@", pewPewURL);
 	AudioServicesCreateSystemSoundID((__bridge CFURLRef)pewPewURL, &_pewPewSound);
 }
 
@@ -278,7 +280,7 @@
     [paragraphStyle setLineSpacing:4];
     
     if (dataArray.count > 0) {
-        int count = dataArray.count;
+        NSUInteger count = dataArray.count;
         if (currentIndex == count) {
             currentIndex = 0;
         }

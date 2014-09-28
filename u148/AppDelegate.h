@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "WeiboSDK.h"
+
 @class RootViewController;
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate, WeiboSDKDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) RootViewController *rootViewController;

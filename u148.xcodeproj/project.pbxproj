@@ -28,6 +28,7 @@
 		401BE48A19961F46005A585D /* dolphin6.png in Resources */ = {isa = PBXBuildFile; fileRef = 401BE48919961F46005A585D /* dolphin6.png */; };
 		401BE49219964ACC005A585D /* ic_session.png in Resources */ = {isa = PBXBuildFile; fileRef = 401BE49019964ACC005A585D /* ic_session.png */; };
 		401BE49319964ACC005A585D /* ic_friend.png in Resources */ = {isa = PBXBuildFile; fileRef = 401BE49119964ACC005A585D /* ic_friend.png */; };
+		4024403D19C6F63E00D5EDFB /* ic_wb.png in Resources */ = {isa = PBXBuildFile; fileRef = 4024403C19C6F63E00D5EDFB /* ic_wb.png */; };
 		4025663A198BE25F00A8FF6A /* TabIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 40256639198BE25F00A8FF6A /* TabIndicator.m */; };
 		40272B1319C171F700B47888 /* PrivacyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 40272B1219C171F700B47888 /* PrivacyViewController.m */; };
 		403387FB197D088F004D49D7 /* MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 403387FA197D088F004D49D7 /* MenuViewController.m */; };
@@ -86,6 +87,9 @@
 		4075355C19794C7900356778 /* UIWebView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 4075355419794C7900356778 /* UIWebView+AFNetworking.m */; };
 		4077EF9C197B971600FDED39 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4077EF9B197B971600FDED39 /* RootViewController.m */; };
 		4077EF9F197BA51200FDED39 /* TabGroupView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4077EF9E197BA51200FDED39 /* TabGroupView.m */; };
+		4079D3FD19C68CA700C07ED7 /* ShareView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4079D3FC19C68CA700C07ED7 /* ShareView.m */; };
+		4079D47019C6997900C07ED7 /* libWeiboSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4079D46D19C6997900C07ED7 /* libWeiboSDK.a */; };
+		4079D47119C6997900C07ED7 /* WeiboSDK.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4079D46E19C6997900C07ED7 /* WeiboSDK.bundle */; };
 		407A1DA91985151500954E08 /* UAccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 407A1DA81985151500954E08 /* UAccountManager.m */; };
 		40987D371996722200D2E100 /* libWeChatSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 40987D341996722200D2E100 /* libWeChatSDK.a */; };
 		40A770AF198C8E9D00AEAE96 /* MenuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 40A770AE198C8E9D00AEAE96 /* MenuCell.m */; };
@@ -144,6 +148,7 @@
 		401BE48919961F46005A585D /* dolphin6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dolphin6.png; sourceTree = "<group>"; };
 		401BE49019964ACC005A585D /* ic_session.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_session.png; sourceTree = "<group>"; };
 		401BE49119964ACC005A585D /* ic_friend.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_friend.png; sourceTree = "<group>"; };
+		4024403C19C6F63E00D5EDFB /* ic_wb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_wb.png; sourceTree = "<group>"; };
 		40256638198BE25F00A8FF6A /* TabIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabIndicator.h; sourceTree = "<group>"; };
 		40256639198BE25F00A8FF6A /* TabIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabIndicator.m; sourceTree = "<group>"; };
 		40272B1119C171F700B47888 /* PrivacyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivacyViewController.h; sourceTree = "<group>"; };
@@ -244,8 +249,14 @@
 		4077EF9B197B971600FDED39 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 		4077EF9D197BA51200FDED39 /* TabGroupView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabGroupView.h; sourceTree = "<group>"; };
 		4077EF9E197BA51200FDED39 /* TabGroupView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabGroupView.m; sourceTree = "<group>"; };
+		4079D3FB19C68CA600C07ED7 /* ShareView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareView.h; sourceTree = "<group>"; };
+		4079D3FC19C68CA700C07ED7 /* ShareView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShareView.m; sourceTree = "<group>"; };
+		4079D46D19C6997900C07ED7 /* libWeiboSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWeiboSDK.a; sourceTree = "<group>"; };
+		4079D46E19C6997900C07ED7 /* WeiboSDK.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = WeiboSDK.bundle; sourceTree = "<group>"; };
+		4079D46F19C6997900C07ED7 /* WeiboSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeiboSDK.h; sourceTree = "<group>"; };
 		407A1DA71985151500954E08 /* UAccountManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAccountManager.h; sourceTree = "<group>"; };
 		407A1DA81985151500954E08 /* UAccountManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAccountManager.m; sourceTree = "<group>"; };
+		408C5D1619D036AA000D5949 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		40987D341996722200D2E100 /* libWeChatSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWeChatSDK.a; sourceTree = "<group>"; };
 		40987D351996722200D2E100 /* WXApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXApi.h; sourceTree = "<group>"; };
 		40987D361996722200D2E100 /* WXApiObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXApiObject.h; sourceTree = "<group>"; };
@@ -293,6 +304,7 @@
 				40987D371996722200D2E100 /* libWeChatSDK.a in Frameworks */,
 				40348F5C197E8381001C4DE5 /* Security.framework in Frameworks */,
 				40348F5A197E8370001C4DE5 /* SystemConfiguration.framework in Frameworks */,
+				4079D47019C6997900C07ED7 /* libWeiboSDK.a in Frameworks */,
 				404508DD197697BD00010684 /* CoreGraphics.framework in Frameworks */,
 				404508DF197697BD00010684 /* UIKit.framework in Frameworks */,
 				404508DB197697BD00010684 /* Foundation.framework in Frameworks */,
@@ -357,6 +369,7 @@
 		404508D9197697BD00010684 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				408C5D1619D036AA000D5949 /* AudioToolbox.framework */,
 				401BE47F1995C72C005A585D /* AVFoundation.framework */,
 				40558004198E08EB009C3D19 /* MessageUI.framework */,
 				40348F5B197E8381001C4DE5 /* Security.framework */,
@@ -372,6 +385,7 @@
 		404508E0197697BD00010684 /* u148 */ = {
 			isa = PBXGroup;
 			children = (
+				4079D46C19C6997900C07ED7 /* libWeiboSDK */,
 				40987D331996722200D2E100 /* WeChatSDK_64 */,
 				407A1DA6198514F800954E08 /* Util */,
 				40348F5D197E840F001C4DE5 /* Flurry */,
@@ -541,6 +555,16 @@
 			name = Controllers;
 			sourceTree = "<group>";
 		};
+		4079D46C19C6997900C07ED7 /* libWeiboSDK */ = {
+			isa = PBXGroup;
+			children = (
+				4079D46D19C6997900C07ED7 /* libWeiboSDK.a */,
+				4079D46E19C6997900C07ED7 /* WeiboSDK.bundle */,
+				4079D46F19C6997900C07ED7 /* WeiboSDK.h */,
+			);
+			path = libWeiboSDK;
+			sourceTree = "<group>";
+		};
 		407A1DA6198514F800954E08 /* Util */ = {
 			isa = PBXGroup;
 			children = (
@@ -590,6 +614,8 @@
 				40256639198BE25F00A8FF6A /* TabIndicator.m */,
 				40A770AD198C8E9D00AEAE96 /* MenuCell.h */,
 				40A770AE198C8E9D00AEAE96 /* MenuCell.m */,
+				4079D3FB19C68CA600C07ED7 /* ShareView.h */,
+				4079D3FC19C68CA700C07ED7 /* ShareView.m */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -597,6 +623,7 @@
 		40CFDED2197A4EB30032B212 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				4024403C19C6F63E00D5EDFB /* ic_wb.png */,
 				40DE2434199F1C9100E744D0 /* ic_register.png */,
 				40DE2432199F1C0300E744D0 /* ic_feedback.png */,
 				40DE2430199F1BB400E744D0 /* ic_info.png */,
@@ -734,6 +761,7 @@
 				40CDD5CA1998C7B00005EF9C /* yingna1.jpg in Resources */,
 				401BE46E1995BB60005A585D /* dolphin4.png in Resources */,
 				4074AE431990D93400B4D8A7 /* bubble_bkg4.jpg in Resources */,
+				4079D47119C6997900C07ED7 /* WeiboSDK.bundle in Resources */,
 				4074AE401990D8CF00B4D8A7 /* ic_logo_big.png in Resources */,
 				4074AE461990FA2700B4D8A7 /* ic_back.png in Resources */,
 				40AB554C198DF40300E4CC03 /* Icon-60@2x.png in Resources */,
@@ -749,6 +777,7 @@
 				40DE2431199F1BB400E744D0 /* ic_info.png in Resources */,
 				40DE242F199F13F400E744D0 /* ic_nav_share.png in Resources */,
 				403AC9421980E6E000AE28DE /* user_default.png in Resources */,
+				4024403D19C6F63E00D5EDFB /* ic_wb.png in Resources */,
 				40DE242B199F138000E744D0 /* ic_nav_cmt.png in Resources */,
 				401BE4701995BB60005A585D /* dolphin7.png in Resources */,
 				401BE4721995BB60005A585D /* dolphin9.png in Resources */,
@@ -822,6 +851,7 @@
 				407535421979493300356778 /* AFURLSessionManager.m in Sources */,
 				4045090B197698AC00010684 /* FeedsViewController.m in Sources */,
 				404508E7197697BD00010684 /* main.m in Sources */,
+				4079D3FD19C68CA700C07ED7 /* ShareView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -938,7 +968,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "LaunchImage-2";
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "u148/u148-Prefix.pch";
@@ -949,7 +979,9 @@
 					"$(PROJECT_DIR)/u148/Flurry",
 					"$(PROJECT_DIR)/u148",
 					"$(PROJECT_DIR)/u148/WeChatSDK_64",
+					"$(PROJECT_DIR)/u148/libWeiboSDK",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "5f225e37-d191-41f2-b840-25b34514141a";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -962,7 +994,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "LaunchImage-2";
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "u148/u148-Prefix.pch";
@@ -973,7 +1005,9 @@
 					"$(PROJECT_DIR)/u148/Flurry",
 					"$(PROJECT_DIR)/u148",
 					"$(PROJECT_DIR)/u148/WeChatSDK_64",
+					"$(PROJECT_DIR)/u148/libWeiboSDK",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "5f225e37-d191-41f2-b840-25b34514141a";
 				TARGETED_DEVICE_FAMILY = 1;

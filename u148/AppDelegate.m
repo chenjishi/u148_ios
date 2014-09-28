@@ -11,6 +11,9 @@
 #import "RootViewController.h"
 #import "Flurry.h"
 
+#define kAppKey @"1792649719"
+#define kRedirectURI @"https://api.weibo.com/oauth2/default.html"
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -33,7 +36,9 @@
         [viewControllers addObject:viewController];
     }
     
+    [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:1.0f green:153.0f/255 blue:0 alpha:1.0f]];
     [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor whiteColor]}];
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     
     RootViewController *rootViewController = [[RootViewController alloc] initWithViewControllers:viewControllers];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
@@ -46,7 +51,23 @@
     [Flurry setCrashReportingEnabled:YES];
     [Flurry startSession:@"FGS28ZX973HSXN3P9WH8"];
     
+    [WeiboSDK registerApp:kAppKey];
+    
     return YES;
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+    return [WeiboSDK handleOpenURL:url delegate:self];
+}
+
+- (void)didReceiveWeiboResponse:(WBBaseResponse *)response
+{
+    
+}
+
+- (void)didReceiveWeiboRequest:(WBBaseRequest *)request
+{
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

@@ -13,6 +13,11 @@
 #import "UIImageView+AFNetworking.h"
 
 @interface MenuViewController ()
+{
+    User *user;
+    NSMutableArray *titles;
+    NSMutableArray *icons;
+}
 
 @end
 
@@ -22,19 +27,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
     
-    self.view.frame = CGRectMake(0, 0, 200, screenHeight - 64);
-    self.view.backgroundColor = [UIColor colorWithRed:55.0/255.0 green:59.0/255.0 blue:62.0/255.0 alpha:1.0];
+    self.view.frame = CGRectMake(0, 0, 200, self.view.frame.size.height);
+    self.view.backgroundColor = [UIColor colorWithRed:55.0f/255 green:59.0f/255 blue:62.0f/255 alpha:1.0f];
     
-    menuTableView = [[UITableView alloc] initWithFrame:self.view.frame style:UITableViewStylePlain];
-    menuTableView.dataSource = self;
-    menuTableView.delegate = self;
-    menuTableView.backgroundColor = [UIColor clearColor];
-    [menuTableView setSeparatorColor:[UIColor colorWithRed:85.0/255.0 green:85.0/255.0 blue:85.0/255.0 alpha:1.0]];
-    [menuTableView setSeparatorInset:UIEdgeInsetsZero];
-    [self.view addSubview:menuTableView];
-    
+    [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     [self refreshMenu];
 }
 
@@ -65,7 +62,7 @@
     [icons addObject:@"ic_feedback.png"];
     [icons addObject:@"ic_info.png"];
     
-    [menuTableView reloadData];
+    [self.tableView reloadData];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -108,10 +105,5 @@
     if (_delegate) {
         [_delegate onMenuClicked:indexPath.row];
     }
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
 }
 @end

@@ -17,13 +17,7 @@
 
 @end
 
-@interface MenuViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
-{
-    User *user;
-    NSMutableArray *titles;
-    NSMutableArray *icons;
-    UITableView *menuTableView;
-}
+@interface MenuViewController : UITableViewController
 
 @property (assign, nonatomic) id<SlideMenuDelegate> delegate;
 

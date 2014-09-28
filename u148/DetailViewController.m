@@ -16,13 +16,11 @@
 #import "MBProgressHUD.h"
 #import "WXApi.h"
 #import "UIImageView+AFNetworking.h"
+#import "ShareView.h"
 
 #define BASE_URL @"http://api.u148.net/json/article/%@"
 #define URL_FAVORITE_ADD @"http://api.u148.net/json/favourite?id=%@&token=%@"
 #define LOGIN_URL @"http://api.u148.net/json/login"
-
-#define TAG_SHARE_SESSION 101
-#define TAG_SHARE_FRIENDS 102
 
 @interface DetailViewController ()
 
@@ -34,8 +32,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     self.view.backgroundColor = [UIColor colorWithRed:246.0f/255 green:246.0f/255 blue:246.0f/255 alpha:1.0f];
+    
+    isShareViewShowed = NO;
     
     UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [commentButton setImage:[UIImage imageNamed:@"ic_nav_cmt.png"] forState:UIControlStateNormal];
@@ -75,12 +74,9 @@
     webView.delegate = self;
     [self.view addSubview:webView];
     
-    [WXApi registerApp:@"wxf862baa09e0df157" withDescription:@"有意思吧"];
-    
+    [WXApi registerApp:@"wxf862baa09e0df157" withDescription:@"有意思吧"];    
     
     [self renderPage:@"正在加载..."];
-    
-    weixinScene = 0;
     
     [self request];
 }
@@ -93,77 +89,30 @@
 
 - (void)onShareButtonClicked
 {
-    [self showShareDialog];
-}
-
-- (void)shareToWeixin:(id)sender
-{
-    UIButton *button = (UIButton*) sender;
-    int scene = button.tag;
-    
-    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
-    [imageView setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:_feed.picMin]]
-                     placeholderImage:[UIImage imageNamed:@"ic_place_holder.png"]
-                              success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-                                  [self sendToWeixin:image withType:scene];
-                              }
-                              failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-                              }];
-    [shareDialog close];
-}
-
-- (void)showShareDialog
-{
-    if (!shareDialog) {
-        shareDialog = [[CustomIOS7AlertView alloc] init];
-        
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 100)];
-        
-        UIButton *button1 = [[UIButton alloc] initWithFrame:CGRectMake(20, 20, 70, 70)];
-        button1.tag = TAG_SHARE_SESSION;
-        [button1 setImage:[UIImage imageNamed:@"ic_session.png"] forState:UIControlStateNormal];
-        [button1 addTarget:self action:@selector(shareToWeixin:) forControlEvents:UIControlEventTouchUpInside];
-        [view addSubview:button1];
-        
-        UIButton *button2 = [[UIButton alloc] initWithFrame:CGRectMake(110, 20, 70, 70)];
-        button2.tag = TAG_SHARE_FRIENDS;
-        [button2 setImage:[UIImage imageNamed:@"ic_friend.png"] forState:UIControlStateNormal];
-        [button2 addTarget:self action:@selector(shareToWeixin:) forControlEvents:UIControlEventTouchUpInside];
-        [view addSubview:button2];
-        
-        [shareDialog setContainerView:view];
-        [shareDialog setButtonTitles:[NSArray arrayWithObject:@"关闭"]];
-        [shareDialog setUseMotionEffects:YES];
-        [shareDialog setDelegate:self];
+    if (!shareView) {
+        CGRect rect = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64);
+        shareView = [[ShareView alloc] initWithFrame:rect];
+        shareView.feedData = _feed;
+        shareView.delegate = self;
+        [self.view addSubview:shareView];
+    } else {
+        [shareView removeFromSuperview];
+        shareView = nil;
     }
-    
-    [shareDialog show];
 }
 
-- (void)customIOS7dialogButtonTouchUpInside:(id)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+- (void)viewWillDisappear:(BOOL)animated
 {
-    [shareDialog close];
+    [super viewWillDisappear:animated];
+    if (shareView) {
+        [shareView removeFromSuperview];
+        shareView = nil;
+    }
 }
 
-- (void)sendToWeixin:(UIImage *) image withType:(int)scene
+- (void)onShareViewDissmiss
 {
-    WXMediaMessage *message = [WXMediaMessage message];
-    message.title = _feed.title;
-    message.description = _feed.summary;
-    [message setThumbImage:image];
-    
-    WXWebpageObject *ext = [WXWebpageObject object];
-    ext.webpageUrl = [NSString stringWithFormat:@"http://www.u148.net/article/%@.html", _feed.feedId];
-    
-    message.mediaObject = ext;
-    SendMessageToWXReq *req = [[SendMessageToWXReq alloc] init];
-    req.bText = NO;
-    req.message = message;
-    req.scene = scene == TAG_SHARE_SESSION ? WXSceneSession : WXSceneTimeline;
-    
-    [WXApi sendReq:req];
-    
-    [shareDialog close];
+    shareView = nil;
 }
 
 - (void)request

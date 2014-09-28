@@ -7,17 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CustomIOS7AlertView.h"
+#import "ShareView.h"
 @class Feed;
 
-@interface DetailViewController : UIViewController <CustomIOS7AlertViewDelegate, UIAlertViewDelegate, UIWebViewDelegate>
+@interface DetailViewController : UIViewController <UIAlertViewDelegate, UIWebViewDelegate, ShareDelegate>
+
 {
     NSDictionary *tags;
-    CustomIOS7AlertView *shareDialog;
     
     UIWebView *webView;
+    ShareView *shareView;
     
-    int weixinScene;
+    BOOL isShareViewShowed;
 }
 
 @property (nonatomic, strong) Feed *feed;

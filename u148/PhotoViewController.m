@@ -7,7 +7,7 @@
 //
 
 #import "PhotoViewController.h"
-#import "UIImageView+AFNetworking.h"
+#import "AFHTTPRequestOperation.h"
 
 @interface PhotoViewController ()
 
@@ -37,26 +37,38 @@
     self.navigationItem.rightBarButtonItem = saveButton;
     
     imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
-    
-    [imageView setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:_imageUrl]]
-                     placeholderImage:[UIImage imageNamed:@"ic_place_holder.png"]
-                              success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-                                  CGFloat w = image.size.width;
-                                  CGFloat h = image.size.height;
-                                  
-                                  CGFloat requestWidth = 320.f;
-                                  CGFloat requestHeight = requestWidth * h / w;
-                                  
-                                  CGFloat y = (self.view.frame.size.height - 64.0f - requestHeight) / 2.0f;
-                                  
-                                  CGRect rect = CGRectMake(0, y, requestWidth, requestHeight);
-                                  [self resizePicture:rect withImage:image];
-                              }
-                              failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-                                  
-                              }];
-    
     [self.view addSubview:imageView];
+    
+    [self requestImage];
+}
+
+- (void)requestImage
+{
+    NSURL *url = [NSURL URLWithString:_imageUrl];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    operation.responseSerializer = [AFImageResponseSerializer serializer];
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (responseObject) {
+            UIImage *image = (UIImage *)responseObject;
+            
+            CGFloat w = image.size.width;
+            CGFloat h = image.size.height;
+            
+            CGFloat requestWidth = self.view.frame.size.width;
+            CGFloat requestHeight = requestWidth * h / w;
+            
+            CGFloat y = (self.view.frame.size.height - 64.0f - requestHeight) / 2.0f;
+            
+            CGRect rect = CGRectMake(0, y, requestWidth, requestHeight);
+            [self resizePicture:rect withImage:image];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    }];
+    
+    [operation start];
 }
 
 - (void)imageSavedToPhotosAlbum:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *) contextInfo
@@ -85,7 +97,6 @@
 
 - (void)onBackPressed
 {
-    NSLog(@"onBackPressed");
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -93,10 +104,5 @@
 {
     imageView.frame = rect;
     imageView.image = image;
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
 }
 @end

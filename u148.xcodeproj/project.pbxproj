@@ -114,6 +114,8 @@
 		40ECDF3F198CB35100425AB6 /* ic_favorite_menu.png in Resources */ = {isa = PBXBuildFile; fileRef = 40ECDF3E198CB35100425AB6 /* ic_favorite_menu.png */; };
 		40ECDF42198CBB7100425AB6 /* FavoriteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 40ECDF41198CBB7100425AB6 /* FavoriteViewController.m */; };
 		40ECDF45198CC28B00425AB6 /* FavoriteItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 40ECDF44198CC28B00425AB6 /* FavoriteItem.m */; };
+		40F4FBEB19D84C3200219872 /* flowers.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 40F4FBEA19D84C3200219872 /* flowers.jpg */; };
+		40F4FBED19D84F0800219872 /* head.png in Resources */ = {isa = PBXBuildFile; fileRef = 40F4FBEC19D84F0800219872 /* head.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -292,6 +294,8 @@
 		40ECDF41198CBB7100425AB6 /* FavoriteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavoriteViewController.m; sourceTree = "<group>"; };
 		40ECDF43198CC28B00425AB6 /* FavoriteItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FavoriteItem.h; sourceTree = "<group>"; };
 		40ECDF44198CC28B00425AB6 /* FavoriteItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavoriteItem.m; sourceTree = "<group>"; };
+		40F4FBEA19D84C3200219872 /* flowers.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = flowers.jpg; sourceTree = "<group>"; };
+		40F4FBEC19D84F0800219872 /* head.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = head.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -623,6 +627,8 @@
 		40CFDED2197A4EB30032B212 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				40F4FBEC19D84F0800219872 /* head.png */,
+				40F4FBEA19D84C3200219872 /* flowers.jpg */,
 				4024403C19C6F63E00D5EDFB /* ic_wb.png */,
 				40DE2434199F1C9100E744D0 /* ic_register.png */,
 				40DE2432199F1C0300E744D0 /* ic_feedback.png */,
@@ -749,9 +755,11 @@
 				40AB5546198DF3BD00E4CC03 /* Images-2.xcassets in Resources */,
 				401BE46C1995BB60005A585D /* dolphin2.png in Resources */,
 				401BE47C1995C10E005A585D /* water.wav in Resources */,
+				40F4FBED19D84F0800219872 /* head.png in Resources */,
 				401BE48A19961F46005A585D /* dolphin6.png in Resources */,
 				40ECDF3D198CB31700425AB6 /* ic_avatar_2.png in Resources */,
 				40736CC3198DF56B00A47D29 /* ic_place_holder.png in Resources */,
+				40F4FBEB19D84C3200219872 /* flowers.jpg in Resources */,
 				40ECDF3F198CB35100425AB6 /* ic_favorite_menu.png in Resources */,
 				401BE4881995F382005A585D /* bubble.wav in Resources */,
 				401BE4771995BC44005A585D /* bubble_break2.png in Resources */,

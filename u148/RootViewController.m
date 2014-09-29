@@ -186,43 +186,39 @@
 - (void)onMenuClicked:(NSUInteger)index
 {
     User *user = [[UAccountManager sharedManager] getUserAccount];
-    if (user != nil && user.token.length > 0) {
-        if (index == 0) {
+    BOOL isLogin = user && user.token.length > 0;
+    
+    if (index == 1001) {
+        if (isLogin) {
             user.token = @"";
             [[UAccountManager sharedManager] setUserAccount:user];
             [self showToast:@"账号已退出"];
             [self.menuViewController refreshMenu];
-        }
-        
-        if (index == 1) {
-            [self openFavoriteController];
-        }
-        
-        if (index == 2) {
-            [self sendFeedBack];
-        }
-        
-        if (index == 3) {
-            [self showAboutDialog];
-        }
-        
-    } else {
-        if (index == 0 || index == 2) {
+        } else {
             [self showLoginDialog];
         }
-        
-        if (index == 1) {
-            [self openRegister];
-        }
-        
-        if (index == 3) {
-            [self sendFeedBack];
-        }
-        
-        if (index == 4) {
-            [self showAboutDialog];
+    }
+    
+    if (index == 1002) {
+        [self openRegister];
+    }
+    
+    if (index == 0) {
+        if (isLogin) {
+            [self openFavoriteController];
+        } else {
+            [self showLoginDialog];
         }
     }
+    
+    if (index == 1) {
+        [self sendFeedBack];
+    }
+    
+    if (index == 2) {
+        [self showAboutDialog];
+    }
+    
     [self hideMenu];
 }
 

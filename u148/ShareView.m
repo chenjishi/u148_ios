@@ -76,7 +76,7 @@
 - (void)onShareClicked:(id)sender
 {
     UIButton *button = (UIButton *)sender;
-    int tag = button.tag;
+    NSInteger tag = button.tag;
     
     NSURL *url = [NSURL URLWithString:self.feedData.picMin];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
@@ -100,7 +100,7 @@
     [operation start];
 }
 
-- (void)sendToWeixin:(UIImage *) image withType:(int)scene
+- (void)sendToWeixin:(UIImage *) image withType:(NSInteger)scene
 {
     WXMediaMessage *message = [WXMediaMessage message];
     message.title = self.feedData.title;

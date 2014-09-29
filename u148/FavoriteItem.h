@@ -12,7 +12,7 @@
 
 @property (nonatomic, strong) NSString *feedId;
 @property (nonatomic, strong) NSString *userId;
-@property (nonatomic, assign) NSUInteger category;
+@property (nonatomic, assign) NSInteger category;
 @property (nonatomic, strong) NSString *articleId;
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) NSString *url;

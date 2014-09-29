@@ -147,7 +147,7 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        int index = indexPath.row;
+        NSInteger index = indexPath.row;
         NSString *feedId = [[dataArray objectAtIndex:index] feedId];
         [dataArray removeObjectAtIndex:index];
         

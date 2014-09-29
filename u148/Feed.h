@@ -13,7 +13,7 @@
 
 @property (nonatomic, strong) NSString *feedId;
 @property (nonatomic, strong) NSString *uid;
-@property (nonatomic, assign) int category;
+@property (nonatomic, assign) NSInteger category;
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) NSString *summary;
 @property (nonatomic, strong) NSString *picMin;

@@ -10,6 +10,6 @@
 
 @interface FeedsViewController : UITableViewController
 
-@property (nonatomic, assign) NSUInteger categoryType;
+@property (nonatomic, assign) int categoryType;
 
 @end

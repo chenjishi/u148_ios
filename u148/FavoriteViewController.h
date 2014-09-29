@@ -10,7 +10,7 @@
 
 @interface FavoriteViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 {
-    NSUInteger page;
+    int page;
     NSString *userToken;
     UITableView *favoriteTable;
     NSMutableArray *dataArray;

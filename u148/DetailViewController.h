@@ -22,5 +22,6 @@
 }
 
 @property (nonatomic, strong) Feed *feed;
+@property (nonatomic, strong) NSString *titleText;
 
 @end

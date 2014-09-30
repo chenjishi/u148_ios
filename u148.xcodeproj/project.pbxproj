@@ -36,7 +36,6 @@
 		40348F56197E628A001C4DE5 /* html in Resources */ = {isa = PBXBuildFile; fileRef = 40348F55197E628A001C4DE5 /* html */; };
 		40348F5A197E8370001C4DE5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 40348F59197E8370001C4DE5 /* SystemConfiguration.framework */; };
 		40348F5C197E8381001C4DE5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 40348F5B197E8381001C4DE5 /* Security.framework */; };
-		40348F60197E840F001C4DE5 /* libFlurry_5.2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 40348F5F197E840F001C4DE5 /* libFlurry_5.2.0.a */; };
 		40358F13197FD9EC00CE64EA /* PhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 40358F12197FD9EC00CE64EA /* PhotoViewController.m */; };
 		40358F1C197FFE4700CE64EA /* CommentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 40358F1B197FFE4700CE64EA /* CommentViewController.m */; };
 		403AC9401980B94100AE28DE /* Comment.m in Sources */ = {isa = PBXBuildFile; fileRef = 403AC93F1980B94100AE28DE /* Comment.m */; };
@@ -92,6 +91,7 @@
 		4079D47119C6997900C07ED7 /* WeiboSDK.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4079D46E19C6997900C07ED7 /* WeiboSDK.bundle */; };
 		407A1DA91985151500954E08 /* UAccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 407A1DA81985151500954E08 /* UAccountManager.m */; };
 		40987D371996722200D2E100 /* libWeChatSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 40987D341996722200D2E100 /* libWeChatSDK.a */; };
+		409C131C19DA4EBF00634997 /* libFlurry_5.4.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 409C131B19DA4EBF00634997 /* libFlurry_5.4.0.a */; };
 		40A770AF198C8E9D00AEAE96 /* MenuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 40A770AE198C8E9D00AEAE96 /* MenuCell.m */; };
 		40AB5546198DF3BD00E4CC03 /* Images-2.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 40AB5545198DF3BD00E4CC03 /* Images-2.xcassets */; };
 		40AB5548198DF3F200E4CC03 /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40AB5547198DF3F200E4CC03 /* Icon-Small@2x.png */; };
@@ -162,8 +162,6 @@
 		40348F55197E628A001C4DE5 /* html */ = {isa = PBXFileReference; lastKnownFileType = folder; path = html; sourceTree = "<group>"; };
 		40348F59197E8370001C4DE5 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		40348F5B197E8381001C4DE5 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		40348F5E197E840F001C4DE5 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
-		40348F5F197E840F001C4DE5 /* libFlurry_5.2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_5.2.0.a; sourceTree = "<group>"; };
 		40358F11197FD9EC00CE64EA /* PhotoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoViewController.h; sourceTree = "<group>"; };
 		40358F12197FD9EC00CE64EA /* PhotoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoViewController.m; sourceTree = "<group>"; };
 		40358F1A197FFE4700CE64EA /* CommentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentViewController.h; sourceTree = "<group>"; };
@@ -262,6 +260,8 @@
 		40987D341996722200D2E100 /* libWeChatSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWeChatSDK.a; sourceTree = "<group>"; };
 		40987D351996722200D2E100 /* WXApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXApi.h; sourceTree = "<group>"; };
 		40987D361996722200D2E100 /* WXApiObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXApiObject.h; sourceTree = "<group>"; };
+		409C131A19DA4EBF00634997 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
+		409C131B19DA4EBF00634997 /* libFlurry_5.4.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_5.4.0.a; sourceTree = "<group>"; };
 		40A770AD198C8E9D00AEAE96 /* MenuCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuCell.h; sourceTree = "<group>"; };
 		40A770AE198C8E9D00AEAE96 /* MenuCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuCell.m; sourceTree = "<group>"; };
 		40AB5545198DF3BD00E4CC03 /* Images-2.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Images-2.xcassets"; sourceTree = "<group>"; };
@@ -308,11 +308,11 @@
 				40987D371996722200D2E100 /* libWeChatSDK.a in Frameworks */,
 				40348F5C197E8381001C4DE5 /* Security.framework in Frameworks */,
 				40348F5A197E8370001C4DE5 /* SystemConfiguration.framework in Frameworks */,
+				409C131C19DA4EBF00634997 /* libFlurry_5.4.0.a in Frameworks */,
 				4079D47019C6997900C07ED7 /* libWeiboSDK.a in Frameworks */,
 				404508DD197697BD00010684 /* CoreGraphics.framework in Frameworks */,
 				404508DF197697BD00010684 /* UIKit.framework in Frameworks */,
 				404508DB197697BD00010684 /* Foundation.framework in Frameworks */,
-				40348F60197E840F001C4DE5 /* libFlurry_5.2.0.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,15 +329,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		40348F5D197E840F001C4DE5 /* Flurry */ = {
-			isa = PBXGroup;
-			children = (
-				40348F5E197E840F001C4DE5 /* Flurry.h */,
-				40348F5F197E840F001C4DE5 /* libFlurry_5.2.0.a */,
-			);
-			path = Flurry;
-			sourceTree = "<group>";
-		};
 		403AC9491981070B00AE28DE /* HtmlString */ = {
 			isa = PBXGroup;
 			children = (
@@ -389,10 +380,10 @@
 		404508E0197697BD00010684 /* u148 */ = {
 			isa = PBXGroup;
 			children = (
+				409C131919DA4EBF00634997 /* Flurry */,
 				4079D46C19C6997900C07ED7 /* libWeiboSDK */,
 				40987D331996722200D2E100 /* WeChatSDK_64 */,
 				407A1DA6198514F800954E08 /* Util */,
-				40348F5D197E840F001C4DE5 /* Flurry */,
 				40348F55197E628A001C4DE5 /* html */,
 				4077EF99197B96DE00FDED39 /* Controllers */,
 				40CFDED2197A4EB30032B212 /* Images */,
@@ -586,6 +577,15 @@
 				40987D361996722200D2E100 /* WXApiObject.h */,
 			);
 			path = WeChatSDK_64;
+			sourceTree = "<group>";
+		};
+		409C131919DA4EBF00634997 /* Flurry */ = {
+			isa = PBXGroup;
+			children = (
+				409C131A19DA4EBF00634997 /* Flurry.h */,
+				409C131B19DA4EBF00634997 /* libFlurry_5.4.0.a */,
+			);
+			path = Flurry;
 			sourceTree = "<group>";
 		};
 		40CFDECA197A41F10032B212 /* Model */ = {

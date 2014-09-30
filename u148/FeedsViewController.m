@@ -23,7 +23,6 @@ static NSString* const feedCellIdentifier = @"feedCell";
     NSMutableParagraphStyle *paragraphStyle;
     NSDictionary *categories;
     
-    UIRefreshControl *refreshControl;
     UIView *mFootView;
     int page;
 }
@@ -41,16 +40,9 @@ static NSString* const feedCellIdentifier = @"feedCell";
     [paragraphStyle setLineSpacing:4];
     page = 1;
     
-    categories = [NSDictionary dictionaryWithObjectsAndKeys:
-                  @"首页", [NSNumber numberWithInt:0],
-                  @"图画", [NSNumber numberWithInt:3],
-                  @"文字", [NSNumber numberWithInt:6],
-                  @"杂粹", [NSNumber numberWithInt:7],
-                  @"集市", [NSNumber numberWithInt:9],
-                  @"漂流", [NSNumber numberWithInt:8],
-                  @"游戏", [NSNumber numberWithInt:4],
-                  @"影像", [NSNumber numberWithInt:2],
-                  @"音频", [NSNumber numberWithInt:5],  nil];
+    categories = @{@0 : @"首页", @3 : @"图画", @6 : @"文字",
+                   @7 : @"杂粹", @9 : @"集市", @8 : @"漂流",
+                   @4 : @"游戏", @2 : @"影像", @5 : @"音频"};
     
     self.tableView.backgroundColor = [UIColor clearColor];
     [self.tableView setSeparatorInset:UIEdgeInsetsZero];
@@ -72,9 +64,10 @@ static NSString* const feedCellIdentifier = @"feedCell";
     
     self.tableView.tableFooterView = mFootView;
     
-    refreshControl = [[UIRefreshControl alloc] init];
-    [self.tableView addSubview:refreshControl];
+    
+    UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
     [refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
+    self.refreshControl = refreshControl;
     
     [self request];
 }
@@ -112,7 +105,7 @@ static NSString* const feedCellIdentifier = @"feedCell";
                      [dataArray addObject:feed];
                  }
                  
-                 [refreshControl endRefreshing];
+                 [self.refreshControl endRefreshing];
                  [self.tableView reloadData];
 
                  if (array.count >= 10) {
@@ -144,9 +137,12 @@ static NSString* const feedCellIdentifier = @"feedCell";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    Feed *feed = [dataArray objectAtIndex:indexPath.row];
+    
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
     DetailViewController *detailController = [[DetailViewController alloc] init];
-    detailController.feed = [dataArray objectAtIndex:indexPath.row];
+    detailController.feed = feed;
+    detailController.titleText = [categories objectForKey:[NSNumber numberWithInteger:feed.category]];
     [self.navigationController pushViewController:detailController animated:YES];
 }
 
@@ -162,7 +158,7 @@ static NSString* const feedCellIdentifier = @"feedCell";
     
     NSMutableAttributedString *title = [[NSMutableAttributedString alloc] initWithString:
                                         [NSString stringWithFormat:@"[%@] %@",
-                                         [categories objectForKey:[NSNumber numberWithInt:feed.category]],
+                                         [categories objectForKey:[NSNumber numberWithInteger:feed.category]],
                                          feed.title]];
     [title addAttribute:NSForegroundColorAttributeName
                   value:[UIColor colorWithRed:255.0/255.0 green:153.0/255.0 blue:0/255.0 alpha:1.0]

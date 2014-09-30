@@ -55,19 +55,7 @@
     UIBarButtonItem *shareItem = [[UIBarButtonItem alloc] initWithCustomView:shareButton];
     
     self.navigationItem.rightBarButtonItems = @[commentItem, favoriteItem, shareItem];
-    
-    tags = [NSDictionary dictionaryWithObjectsAndKeys:
-            @"首页", [NSNumber numberWithInt:0],
-            @"图画", [NSNumber numberWithInt:3],
-            @"文字", [NSNumber numberWithInt:6],
-            @"杂粹", [NSNumber numberWithInt:7],
-            @"集市", [NSNumber numberWithInt:9],
-            @"漂流", [NSNumber numberWithInt:8],
-            @"游戏", [NSNumber numberWithInt:4],
-            @"影像", [NSNumber numberWithInt:2],
-            @"音频", [NSNumber numberWithInt:5],  nil];
-    
-    self.navigationController.navigationBar.topItem.title = [tags objectForKey:[NSNumber numberWithInt:self.feed.category]];
+    self.navigationController.navigationBar.topItem.title = self.titleText ? self.titleText : @"收藏";
     
     
     webView = [[UIWebView alloc] initWithFrame:self.view.frame];

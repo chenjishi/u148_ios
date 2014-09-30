@@ -123,7 +123,7 @@
                                                  name:UIKeyboardDidChangeFrameNotification
                                                object:nil];
     
-    [self request];
+    [self request:YES];
 }
 
 - (void)onCommentButtonClicked
@@ -231,14 +231,14 @@
 - (void)loadMore
 {
     page++;
-    [self request];
+    [self request:NO];
 }
 
 - (void)login:(NSString *)name withPassword:(NSString *)password
 {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
     NSDictionary *params = @{@"email" : name, @"password" : password};
     [manager POST:[NSString stringWithFormat:LOGIN_URL] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -281,6 +281,8 @@
               [self showToast:@"评论成功"];
               replyId = nil;
               mTextField.placeholder = @"写下你的评论";
+              mTextField.text = @"";
+              [self request:YES];
           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
               [self showToast:@"评论失败，稍后再试"];
           }];
@@ -308,7 +310,7 @@
     }
 }
 
-- (void)request
+- (void)request:(BOOL)refresh
 {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
@@ -319,6 +321,10 @@
          success:^(AFHTTPRequestOperation *operation, id responseObject) {
              
              if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                 if (refresh) {
+                     [dataArray removeAllObjects];
+                 }
+                 
                  NSDictionary *dict = (NSDictionary *) responseObject;
                  NSDictionary *data = [dict objectForKey:@"data"];
                  NSArray *array = [data objectForKey:@"data"];
@@ -435,10 +441,5 @@
     Comment *comment = [dataArray objectAtIndex:indexPath.row];
     replyId = comment.commentId;
     mTextField.placeholder = [NSString stringWithFormat:@"回复:%@", comment.user.nickname];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
 }
 @end

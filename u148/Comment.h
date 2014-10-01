@@ -13,6 +13,7 @@
 
 @property (nonatomic, strong) NSString *commentId;
 @property (nonatomic, strong) NSString *contents;
+@property (nonatomic, strong) NSString *reply;
 @property (nonatomic, strong) User *user;
 @property (nonatomic, strong) NSString *userId;
 @property (nonatomic, strong) NSString *articleId;

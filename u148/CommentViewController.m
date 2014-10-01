@@ -36,6 +36,10 @@
     self.title = @"";
     self.navigationController.navigationBar.topItem.title = @"评论";
     
+    contentRegex = [NSRegularExpression regularExpressionWithPattern:@"(.+?)<blockquote>(.+?)<\\/blockquote>"
+                                                                           options:NSRegularExpressionDotMatchesLineSeparators
+                                                                             error:nil];
+    
     mUser = [[UAccountManager sharedManager] getUserAccount];
     
     page = 1;
@@ -331,6 +335,18 @@
                  
                  for (NSDictionary *item in array) {
                      Comment *comment = [[Comment alloc] initWithDictionary:item];
+                     
+                     NSString *content = comment.contents;
+                     
+                     NSArray *matches = [contentRegex matchesInString:content options:0 range:NSMakeRange(0, content.length)];
+                     
+                     for (NSTextCheckingResult *match in matches) {
+                         NSString *s1 = [content substringWithRange:[match rangeAtIndex:1]];
+                         comment.contents = [s1 stringByReplacingOccurrencesOfString:@"<br />" withString:@"\n\n"];
+                         NSString *s2 = [content substringWithRange:[match rangeAtIndex:2]];
+                         comment.reply = [s2 stringByReplacingOccurrencesOfString:@"<br />" withString:@"\n"];
+                     }
+                     
                      [dataArray addObject:comment];
                  }
                  
@@ -354,24 +370,22 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *text = [[dataArray objectAtIndex:indexPath.row] contents];
-    CGSize contraint = CGSizeMake(self.view.frame.size.width - 8 * 2 - 40 - 8, 2000.0f);
+    Comment *comment = [dataArray objectAtIndex:indexPath.row];
     
+    CGFloat h1 = [self getTextHeight:comment.contents];
+    CGFloat h2 = [self getTextHeight:comment.reply];
+    
+    return h1 + h2 + 12 * 2 + 8 + 12;
+}
+
+- (CGFloat)getTextHeight:(NSString *)text
+{
+    CGSize contraint = CGSizeMake(self.view.frame.size.width - 8 * 2 - 40 - 8, 2000.0f);
     CGRect textRect = [text boundingRectWithSize:contraint
                                          options:NSStringDrawingUsesLineFragmentOrigin
                                       attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:14]}
                                          context:nil];
-    CGFloat textHeight = textRect.size.height;
-    
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"<br.*?/>"
-                                                                           options:NSRegularExpressionCaseInsensitive
-                                                                             error:nil];
-    NSUInteger matches = [regex numberOfMatchesInString:text options:0 range:NSMakeRange(0, text.length)];
-    
-    //we replace <br/> to line break, so we should add the height
-    textHeight += matches * 14;
-    
-    return textHeight + 12 * 2 + 8 + 14;
+    return textRect.size.height;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -396,31 +410,15 @@
     [cell.imageView setImageWithURL:[NSURL URLWithString:comment.user.icon]
                    placeholderImage:[UIImage imageNamed:@"user_default.png"]];
     cell.textLabel.attributedText = userInfo;
-    cell.detailTextLabel.text = comment.contents;
     
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"<blockquote>(.+?)</blockquote>"
-                                                                           options:NSRegularExpressionCaseInsensitive
-                                                                             error:nil];
     NSString *content = comment.contents;
-    NSString *replyContent = nil;
-    NSArray *matches = [regex matchesInString:content options:0 range:NSMakeRange(0, content.length)];
-    for (NSTextCheckingResult *match in matches) {
-        NSRange matchRange = [match range];
-        replyContent = [content substringWithRange:matchRange];
-    }
-    
-    if (replyContent != nil) {
-        content = [content stringByReplacingOccurrencesOfString:replyContent withString:@""];
-        content = [content stringByReplacingOccurrencesOfString:@"<br />" withString:@"\n"];
-        replyContent = [replyContent stringByReplacingOccurrencesOfString:@"<br />" withString:@"\n"];
-        replyContent = [replyContent stringByReplacingOccurrencesOfString:@"<blockquote>" withString:@""];
-        replyContent = [replyContent stringByReplacingOccurrencesOfString:@"</blockquote>" withString:@""];
-        
-        NSString *result = [NSString stringWithFormat:@"%@\n%@", content, replyContent];
+    NSString *reply = comment.reply;
+    if (reply) {
+        NSString *result = [NSString stringWithFormat:@"%@ %@", content, reply];
         NSMutableAttributedString *attributString = [[NSMutableAttributedString alloc] initWithString:result];
         [attributString addAttribute:NSForegroundColorAttributeName
                                value:[UIColor colorWithRed:153.0/255.0 green:153.0/255.0 blue:153.0/255.0 alpha:1.0]
-                               range:NSMakeRange(content.length, replyContent.length + 1)];
+                               range:NSMakeRange(content.length, reply.length + 1)];
         
         cell.detailTextLabel.attributedText = attributString;
     } else {

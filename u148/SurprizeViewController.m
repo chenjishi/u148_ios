@@ -238,7 +238,6 @@
 {
     NSString *path = [[NSBundle mainBundle] pathForResource:@"bubble" ofType:@"wav"];
     NSURL *pewPewURL = [NSURL fileURLWithPath:path];
-    NSLog(@"pewPewURL %@", pewPewURL);
 	AudioServicesCreateSystemSoundID((__bridge CFURLRef)pewPewURL, &_pewPewSound);
 }
 

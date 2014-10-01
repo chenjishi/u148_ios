@@ -61,11 +61,10 @@ static NSString* const feedCellIdentifier = @"feedCell";
     footButton.titleLabel.font = [UIFont systemFontOfSize:14.0f];
     [footButton addTarget:self action:@selector(loadMore) forControlEvents:UIControlEventTouchUpInside];
     [mFootView addSubview:footButton];
-    
     self.tableView.tableFooterView = mFootView;
     
-    
     UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+    refreshControl.tintColor = [UIColor colorWithRed:1.0f green:153.0f/255 blue:0 alpha:1.0f];
     [refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
     self.refreshControl = refreshControl;
     

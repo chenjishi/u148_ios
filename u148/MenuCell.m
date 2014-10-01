@@ -15,7 +15,8 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.textLabel.font = [UIFont systemFontOfSize:16.0f];
-        self.textLabel.textColor = [UIColor colorWithRed:223.0/255.0 green:223.0/255.0 blue:223.0/255.0 alpha:1.0];
+        self.textLabel.backgroundColor = [UIColor clearColor];
+        self.textLabel.textColor = [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:0.6f];
         
         UIView *divider = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 1)];
         divider.backgroundColor = [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:0.1];

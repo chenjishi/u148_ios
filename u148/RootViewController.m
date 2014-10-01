@@ -189,14 +189,7 @@
     BOOL isLogin = user && user.token.length > 0;
     
     if (index == 1001) {
-        if (isLogin) {
-            user.token = @"";
-            [[UAccountManager sharedManager] setUserAccount:user];
-            [self showToast:@"账号已退出"];
-            [self.menuViewController refreshMenu];
-        } else {
-            [self showLoginDialog];
-        }
+        [self showLoginDialog];
     }
     
     if (index == 1002) {
@@ -217,6 +210,13 @@
     
     if (index == 2) {
         [self showAboutDialog];
+    }
+    
+    if (index == 3) {
+        user.token = @"";
+        [[UAccountManager sharedManager] setUserAccount:user];
+        [self showToast:@"账号已退出"];
+        [self.menuViewController refreshMenu];
     }
     
     [self hideMenu];

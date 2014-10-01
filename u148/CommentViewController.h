@@ -20,6 +20,8 @@
     NSMutableArray *dataArray;
     NSDateFormatter *dateFormatter;
     
+    NSRegularExpression *contentRegex;
+    
     NSString *replyId;
     User *mUser;
     

@@ -16,6 +16,7 @@
 #import "CustomIOS7AlertView.h"
 #import "SurprizeViewController.h"
 #import "RegisterViewController.h"
+#import "FeedsViewController.h"
 
 #define LOGIN_URL @"http://api.u148.net/json/login"
 
@@ -79,6 +80,8 @@
     
     isMenuShow = NO;
     tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideMenu)];
+    
+    [self refreshTableView:0];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -180,6 +183,8 @@
         CGRect frame = _scrollView.frame;
         frame.origin.x = frame.size.width * tabIndex;
         [_scrollView scrollRectToVisible:frame animated:YES];
+        
+        [self refreshTableView:tabIndex];
     }
 }
 
@@ -367,6 +372,15 @@
     if (index != tabIndex) {
         tabIndex = index;
         [self.tabGroupView setIndexAt:index];
+        [self refreshTableView:index];
+    }
+}
+
+- (void)refreshTableView:(NSUInteger)index
+{
+    FeedsViewController *feedController = [_controllers objectAtIndex:index];
+    if (feedController) {
+        [feedController requestData];
     }
 }
 

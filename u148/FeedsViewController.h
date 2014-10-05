@@ -12,4 +12,6 @@
 
 @property (nonatomic, assign) int categoryType;
 
+- (void)requestData;
+
 @end

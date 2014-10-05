@@ -68,6 +68,8 @@
 		40558005198E08EB009C3D19 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 40558004198E08EB009C3D19 /* MessageUI.framework */; };
 		4055800C198E0FD2009C3D19 /* CustomIOS7AlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4055800B198E0FD2009C3D19 /* CustomIOS7AlertView.m */; };
 		40558015198E1D4B009C3D19 /* SurprizeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 40558014198E1D4B009C3D19 /* SurprizeViewController.m */; };
+		4061E0BF19DFD2C40014D19B /* compass_background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4061E0BE19DFD2C40014D19B /* compass_background@2x.png */; };
+		4061E0C119DFD2C90014D19B /* compass_spinner@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4061E0C019DFD2C90014D19B /* compass_spinner@2x.png */; };
 		40736CC3198DF56B00A47D29 /* ic_place_holder.png in Resources */ = {isa = PBXBuildFile; fileRef = 40736CC2198DF56B00A47D29 /* ic_place_holder.png */; };
 		4074AE401990D8CF00B4D8A7 /* ic_logo_big.png in Resources */ = {isa = PBXBuildFile; fileRef = 4074AE3F1990D8CF00B4D8A7 /* ic_logo_big.png */; };
 		4074AE431990D93400B4D8A7 /* bubble_bkg4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4074AE411990D93400B4D8A7 /* bubble_bkg4.jpg */; };
@@ -212,6 +214,10 @@
 		4055800B198E0FD2009C3D19 /* CustomIOS7AlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CustomIOS7AlertView.m; path = "../../../../ios_lib/ios-custom-alertview/CustomIOS7AlertView/CustomIOS7AlertView/View/CustomIOS7AlertView.m"; sourceTree = "<group>"; };
 		40558013198E1D4B009C3D19 /* SurprizeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurprizeViewController.h; sourceTree = "<group>"; };
 		40558014198E1D4B009C3D19 /* SurprizeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurprizeViewController.m; sourceTree = "<group>"; };
+		4061E0BE19DFD2C40014D19B /* compass_background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "compass_background@2x.png"; sourceTree = "<group>"; };
+		4061E0C019DFD2C90014D19B /* compass_spinner@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "compass_spinner@2x.png"; sourceTree = "<group>"; };
+		4061E0C219DFE7030014D19B /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		4061E0C319DFE7030014D19B /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		40736CC2198DF56B00A47D29 /* ic_place_holder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_place_holder.png; sourceTree = "<group>"; };
 		4074AE3F1990D8CF00B4D8A7 /* ic_logo_big.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_logo_big.png; sourceTree = "<group>"; };
 		4074AE411990D93400B4D8A7 /* bubble_bkg4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bubble_bkg4.jpg; sourceTree = "<group>"; };
@@ -631,6 +637,8 @@
 		40CFDED2197A4EB30032B212 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				4061E0C019DFD2C90014D19B /* compass_spinner@2x.png */,
+				4061E0BE19DFD2C40014D19B /* compass_background@2x.png */,
 				404E8A5319DB04AE008CD99B /* ic_menu1.png */,
 				404E8A5B19DB0909008CD99B /* ic_nav_favorite.png */,
 				404E8A5419DB04AE008CD99B /* ic_menu2.png */,
@@ -737,6 +745,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				"zh-Hans",
 			);
 			mainGroup = 404508CE197697BD00010684;
 			productRefGroup = 404508D8197697BD00010684 /* Products */;
@@ -760,6 +769,7 @@
 				404E8A5819DB04AE008CD99B /* ic_menu2.png in Resources */,
 				404508E5197697BD00010684 /* InfoPlist.strings in Resources */,
 				40AB5546198DF3BD00E4CC03 /* Images-2.xcassets in Resources */,
+				4061E0C119DFD2C90014D19B /* compass_spinner@2x.png in Resources */,
 				401BE46C1995BB60005A585D /* dolphin2.png in Resources */,
 				401BE47C1995C10E005A585D /* water.wav in Resources */,
 				40F4FBED19D84F0800219872 /* head.png in Resources */,
@@ -779,6 +789,7 @@
 				4074AE431990D93400B4D8A7 /* bubble_bkg4.jpg in Resources */,
 				4079D47119C6997900C07ED7 /* WeiboSDK.bundle in Resources */,
 				404E8A5719DB04AE008CD99B /* ic_menu1.png in Resources */,
+				4061E0BF19DFD2C40014D19B /* compass_background@2x.png in Resources */,
 				4074AE401990D8CF00B4D8A7 /* ic_logo_big.png in Resources */,
 				404E8A5C19DB0909008CD99B /* ic_nav_favorite.png in Resources */,
 				4074AE461990FA2700B4D8A7 /* ic_back.png in Resources */,
@@ -894,6 +905,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				404508E4197697BD00010684 /* en */,
+				4061E0C219DFE7030014D19B /* zh-Hans */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -902,6 +914,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				404508FD197697BD00010684 /* en */,
+				4061E0C319DFE7030014D19B /* zh-Hans */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

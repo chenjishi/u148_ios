@@ -63,12 +63,9 @@ static NSString* const feedCellIdentifier = @"feedCell";
     [mFootView addSubview:footButton];
     self.tableView.tableFooterView = mFootView;
     
-    UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
-    refreshControl.tintColor = [UIColor colorWithRed:1.0f green:153.0f/255 blue:0 alpha:1.0f];
-    [refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
-    self.refreshControl = refreshControl;
-    
-    [self request];
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    self.refreshControl.tintColor = [UIColor colorWithRed:1.0f green:153.0f/255 blue:0 alpha:1.0f];
+    [self.refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)refreshTable
@@ -76,6 +73,13 @@ static NSString* const feedCellIdentifier = @"feedCell";
     page = 1;
     [dataArray removeAllObjects];
     [self request];
+}
+
+- (void)requestData
+{
+    if (dataArray.count == 0) {
+        [self request];
+    }
 }
 
 - (void)loadMore
@@ -173,10 +177,5 @@ static NSString* const feedCellIdentifier = @"feedCell";
     cell.reviewsLabel.text = [NSString stringWithFormat:@"%i人看过  %i评论", feed.browses, feed.reviews];
     
     return cell;
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
 }
 @end

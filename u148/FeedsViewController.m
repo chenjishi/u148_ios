@@ -12,6 +12,8 @@
 #import "UIImageView+AFNetworking.h"
 #import "FeedCell.h"
 #import "DetailViewController.h"
+#import "FLAnimatedImageView.h"
+#import "FLAnimatedImage.h"
 
 #define BASE_URL @"http://api.u148.net/json/%i/%i"
 
@@ -168,7 +170,22 @@ static NSString* const feedCellIdentifier = @"feedCell";
                   value:[UIColor colorWithRed:255.0/255.0 green:153.0/255.0 blue:0/255.0 alpha:1.0]
                   range:NSMakeRange(0, 4)];
     
-    [cell.imageView setImageWithURL:[NSURL URLWithString:feed.picMin] placeholderImage:[UIImage imageNamed:@"ic_place_holder.png"]];
+    NSString *imageUrl = feed.picMin;
+    if ([imageUrl hasSuffix:@".gif"]) {
+        FLAnimatedImage *__block animatedImage = nil;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSURL *url = [NSURL URLWithString:imageUrl];
+            NSData *data = [NSData dataWithContentsOfURL:url];
+            animatedImage = [[FLAnimatedImage alloc] initWithAnimatedGIFData:data];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                cell.postImage.animatedImage = animatedImage;
+            });
+        });
+    } else {
+        [cell.postImage setImageWithURL:[NSURL URLWithString:imageUrl] placeholderImage:[UIImage imageNamed:@"ic_place_holder.png"]];
+    }
+    
     cell.textLabel.attributedText = title;
     
     

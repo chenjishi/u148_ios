@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+@class FLAnimatedImageView;
 
 @interface FeedCell : UITableViewCell
 
 @property (nonatomic, strong) UILabel *reviewsLabel;
+@property (nonatomic, strong) FLAnimatedImageView *postImage;
 
 @end

@@ -8,13 +8,20 @@
 
 #import "PhotoViewController.h"
 #import "AFHTTPRequestOperation.h"
+#import "FLAnimatedImageView.h"
+#import "FLAnimatedImage.h"
 
 @interface PhotoViewController ()
+{
+    FLAnimatedImageView *imageView;
+}
 
 @end
 
 @implementation PhotoViewController
 @synthesize imageUrl = _imageUrl;
+
+
 
 - (void)viewDidLoad
 {
@@ -36,10 +43,37 @@
                                                                   action:@selector(onSaveButtonPressed)];
     self.navigationItem.rightBarButtonItem = saveButton;
     
-    imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
+    imageView = [[FLAnimatedImageView alloc] init];
+    imageView.contentMode = UIViewContentModeScaleAspectFill;
+    imageView.clipsToBounds = YES;
     [self.view addSubview:imageView];
     
-    [self requestImage];
+    if ([_imageUrl hasSuffix:@".gif"]) {
+        [self requestGif];
+    } else {
+        [self requestImage];
+    }
+}
+
+- (void)requestGif
+{
+    FLAnimatedImage * __block animatedImage = nil;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSURL *url = [NSURL URLWithString:_imageUrl];
+        NSData *data = [NSData dataWithContentsOfURL:url];
+        animatedImage = [[FLAnimatedImage alloc] initWithAnimatedGIFData:data];
+        
+        CGSize size = animatedImage.size;
+        
+        CGFloat width = self.view.frame.size.width - 16;
+        CGFloat height = width * size.height / size.width;
+        
+        imageView.frame = CGRectMake(8, (self.view.frame.size.height - height) / 2, width, height);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            imageView.animatedImage = animatedImage;
+        });
+    });
 }
 
 - (void)requestImage

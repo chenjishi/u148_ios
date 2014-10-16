@@ -9,10 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface PhotoViewController : UIViewController
-{
-    UIImageView *imageView;
-}
-
 
 @property (nonatomic, strong) NSString *imageUrl;
 

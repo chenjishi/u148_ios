@@ -7,6 +7,7 @@
 //
 
 #import "FeedCell.h"
+#import "FLAnimatedImageView.h"
 
 @implementation FeedCell
 
@@ -14,6 +15,10 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        self.postImage = [[FLAnimatedImageView alloc] init];
+        self.postImage.image = [UIImage imageNamed:@"ic_place_holder.png"];
+        [self.contentView addSubview:self.postImage];
+        
         self.textLabel.font = [UIFont boldSystemFontOfSize:15.0];
         self.textLabel.textColor = [UIColor colorWithRed:51.0/255.0 green:51.0/255.0 blue:51.0/255.0 alpha:1.0];
         
@@ -36,7 +41,7 @@
     [super layoutSubviews];
     
     CGRect rect = CGRectMake(8, 16, 80, 87);
-    self.imageView.frame = rect;
+    self.postImage.frame = rect;
     
     int x = rect.origin.x + rect.size.width + 8;
     self.textLabel.frame = CGRectMake(x, rect.origin.y,

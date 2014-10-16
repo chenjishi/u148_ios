@@ -16,14 +16,14 @@
 
 @end
 
-@interface TabGroupView : UIView
+@interface TabGroupView : UIScrollView
 {
     CGFloat tabWidth;
+    NSInteger tabCount;
+    TabIndicator *tabIndicator;
 }
 
-@property (nonatomic, strong) NSArray *titles;
-@property (nonatomic, strong) TabIndicator *tabIndicator;
-@property (nonatomic, assign) id<TabBarDelegate> delegate;
+@property (nonatomic, assign) id<TabBarDelegate> tabDelegate;
 
 - (void)setIndexAt:(NSUInteger)index;
 

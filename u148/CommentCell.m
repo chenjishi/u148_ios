@@ -14,6 +14,8 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        self.imageView.image = [UIImage imageNamed:@"user_default"];
+        
         self.textLabel.font = [UIFont systemFontOfSize:14];
         self.textLabel.textColor = [UIColor colorWithRed:153.0/255.0 green:153.0/255.0 blue:153.0/255.0 alpha:1.0];
         

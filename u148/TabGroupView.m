@@ -10,41 +10,56 @@
 #import "TabIndicator.h"
 
 #define TAB_VIEW_TAG  200
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
 @implementation TabGroupView
 
-@synthesize delegate = _delegate;
+@synthesize tabDelegate = _tabDelegate;
 
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
-        
-        self.titles = [NSArray arrayWithObjects:@"首页", @"图画", @"文字", @"杂粹", @"集市", @"漂流", nil];
-        
         self.backgroundColor = [UIColor colorWithRed:240.0f/255 green:240.0f/255 blue:240.0f/255 alpha:1.0];
         
-        NSUInteger count = self.titles.count;
-        tabWidth = frame.size.width * 1.0f / count;
+        NSArray *titleArray = @[@"首页", @"图画", @"文字", @"音频", @"短品", @"杂粹", @"影像", @"集市", @"漂流"];
+        tabCount = [titleArray count];
+        tabWidth = frame.size.width * 1.0f / 6;
         
-        self.tabIndicator = [[TabIndicator alloc] initWithFrame:CGRectMake(0, 0, tabWidth, frame.size.height)];
-        
-        for (NSUInteger i = 0; i < count; i++) {
-            CGRect rect = CGRectMake(tabWidth * i, 0, tabWidth, frame.size.height);
-            UIButton *label = [UIButton buttonWithType:UIButtonTypeCustom];
-            label.frame = rect;
-            label.tag = TAB_VIEW_TAG + i;
-            [label setTitle:[self.titles objectAtIndex:i] forState:UIControlStateNormal];
-            [label setTitleColor:[UIColor colorWithRed:51.0/255.0 green:51.0/255.0 blue:51.0/255.0 alpha:1.0] forState:UIControlStateNormal];
-            label.titleLabel.font = [UIFont systemFontOfSize:14.0f];
-            label.backgroundColor = [UIColor clearColor];
-            [label addTarget:self action:@selector(tabClicked:) forControlEvents:UIControlEventTouchUpInside];
-            [self addSubview:label];
+        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0")) {
+            self.panGestureRecognizer.delaysTouchesBegan = YES;
         }
+
+        self.showsHorizontalScrollIndicator = NO;
+        self.showsVerticalScrollIndicator = NO;
+        self.autoresizesSubviews = NO;
+        self.autoresizingMask = UIViewAutoresizingNone;
         
-        [self addSubview:self.tabIndicator];
+        for (NSInteger i = 0; i < tabCount; i++) {
+            CGRect rect = CGRectMake(tabWidth * i, 0, tabWidth, frame.size.height);
+            UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+            button.frame = rect;
+            button.tag = TAB_VIEW_TAG + i;
+            [button setTitle:[titleArray objectAtIndex:i] forState:UIControlStateNormal];
+            [button setTitleColor:[UIColor colorWithRed:51.0/255 green:51.0/255 blue:51.0/255 alpha:1.0] forState:UIControlStateNormal];
+            button.titleLabel.font = [UIFont systemFontOfSize:14.0f];
+            button.backgroundColor = [UIColor clearColor];
+            [button addTarget:self action:@selector(tabClicked:) forControlEvents:UIControlEventTouchUpInside];
+            
+            [self addSubview:button];
+        }       
+        
+        tabIndicator = [[TabIndicator alloc] initWithFrame:CGRectMake(0, 0, tabWidth, frame.size.height)];
+        [self addSubview:tabIndicator];
     }
+    
+    self.contentSize = CGSizeMake(tabCount * tabWidth, frame.size.height);   
     return self;
+}
+
+- (BOOL)touchesShouldBegin:(NSSet *)touches withEvent:(UIEvent *)event inContentView:(UIView *)view
+{
+    return YES;
 }
 
 - (void)tabClicked:(id)sender
@@ -52,18 +67,18 @@
     UIButton *button = (UIButton *)sender;
     NSUInteger index = button.tag - TAB_VIEW_TAG;
     
-    if (_delegate) {
-        [_delegate onTabClicked:index];
+    if (_tabDelegate) {
+        [_tabDelegate onTabClicked:index];
     }
 }
 
 - (void)setIndexAt:(NSUInteger)index
 {
-    CGRect frame = self.tabIndicator.frame;
+    CGRect frame = tabIndicator.frame;
     frame.origin.x = index * tabWidth;
-    self.tabIndicator.frame = frame;
+    tabIndicator.frame = frame;
     
-    for (NSUInteger i = 0; i < self.titles.count; i++) {
+    for (NSUInteger i = 0; i < tabCount; i++) {
         UIButton *label = (UIButton*) [self viewWithTag:TAB_VIEW_TAG + i];
         if (i == index) {
             [label setTitleColor:[UIColor colorWithRed:255.0/255.0 green:153.0/255.0 blue:0/255.0 alpha:1.0] forState:UIControlStateNormal];
@@ -71,16 +86,14 @@
             [label setTitleColor:[UIColor colorWithRed:51.0/255.0 green:51.0/255.0 blue:51.0/255.0 alpha:1.0] forState:UIControlStateNormal];
         }
     }
+    
+    CGFloat x;
+    if (index >= 5) {
+        x = (index + 1) * tabWidth;
+    } else {
+        x = (index - 1) * tabWidth;
+    }
+    CGRect rect = CGRectMake(x, 0, tabWidth, self.frame.size.height);
+    [self scrollRectToVisible:rect animated:YES];
 }
-
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
-
 @end

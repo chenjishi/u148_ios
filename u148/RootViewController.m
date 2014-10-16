@@ -17,8 +17,12 @@
 #import "SurprizeViewController.h"
 #import "RegisterViewController.h"
 #import "FeedsViewController.h"
+#import "TabIndicator.h"
 
 #define LOGIN_URL @"http://api.u148.net/json/login"
+
+#define TAB_VIEW_TAG  200
+
 
 @interface RootViewController ()
 
@@ -53,9 +57,13 @@
     [self.view addSubview:_contentView];
     
     tabIndex = 0;
+    
+    //prevent scrollview's add top space
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    
     self.tabGroupView = [[TabGroupView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 36)];
     [self.tabGroupView setIndexAt:tabIndex];
-    self.tabGroupView.delegate = self;
+    self.tabGroupView.tabDelegate = self;
     [_contentView addSubview:self.tabGroupView];
     
     CGRect rect = CGRectMake(0, 36, self.view.frame.size.width, _contentView.frame.size.height - 36);
@@ -94,6 +102,8 @@
 {
     [super viewDidAppear:animated];
     [self.menuViewController refreshMenu];
+    tabScrollView.contentSize = CGSizeMake(tabWidth * tabCount, 36);
+
 }
 
 - (void)showLoginDialog

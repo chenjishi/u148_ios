@@ -21,6 +21,12 @@ SlideMenuDelegate, UIAlertViewDelegate, MFMailComposeViewControllerDelegate, Tab
     CustomIOS7AlertView *aboutDialog;
     
     UITapGestureRecognizer *tapRecognizer;
+    
+    CGFloat tabWidth;
+    NSInteger tabCount;
+    TabIndicator *tabIndicator;
+    
+    UIScrollView *tabScrollView;
 }
 
 @property (nonatomic, readonly) UIView *contentView;

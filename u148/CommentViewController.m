@@ -274,7 +274,8 @@
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithCapacity:0];
     [params setObject:self.articleId forKey:@"id"];
     [params setObject:mUser.token forKey:@"token"];
-    [params setObject:[NSString stringWithFormat:@"%@ (来自iPhone客户端)", content] forKey:@"content"];
+    [params setObject:@"iPhone" forKey:@"client"];
+    [params setObject:content forKey:@"content"];
     if (replyId) {
         [params setObject:replyId forKey:@"review_id"];
     }
@@ -408,7 +409,7 @@
                      range:NSMakeRange(0, len)];
     
     [cell.imageView setImageWithURL:[NSURL URLWithString:comment.user.icon]
-                   placeholderImage:[UIImage imageNamed:@"user_default.png"]];
+                   placeholderImage:[UIImage imageNamed:@"user_default"]];
     cell.textLabel.attributedText = userInfo;
     
     NSString *content = comment.contents;

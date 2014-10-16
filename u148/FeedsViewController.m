@@ -42,7 +42,8 @@ static NSString* const feedCellIdentifier = @"feedCell";
     
     categories = @{@0 : @"首页", @3 : @"图画", @6 : @"文字",
                    @7 : @"杂粹", @9 : @"集市", @8 : @"漂流",
-                   @4 : @"游戏", @2 : @"影像", @5 : @"音频"};
+                   @4 : @"游戏", @2 : @"影像", @5 : @"音频",
+                   @10 : @"短品"};
     
     self.tableView.backgroundColor = [UIColor clearColor];
     [self.tableView setSeparatorInset:UIEdgeInsetsZero];

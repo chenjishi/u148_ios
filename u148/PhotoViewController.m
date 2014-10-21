@@ -43,12 +43,28 @@
                                                                   action:@selector(onSaveButtonPressed)];
     self.navigationItem.rightBarButtonItem = saveButton;
     
+    UILabel *label = [[UILabel alloc] init];
+    label.hidden = YES;
+    label.text = @"GIF 图片加载中...";
+    label.font = [UIFont systemFontOfSize:16.0];
+    label.textColor = [UIColor colorWithRed:153.0/255 green:153.0/255 blue:153.0/255 alpha:1.0];
+    label.frame = CGRectZero;
+    [label sizeToFit];
+    
+    CGRect rect = label.frame;
+    label.frame = CGRectMake((self.view.frame.size.width - rect.size.width) / 2,
+                             (self.view.frame.size.height - rect.size.height) / 2,
+                             rect.size.width,
+                             rect.size.height);
+    [self.view addSubview:label];
+    
     imageView = [[FLAnimatedImageView alloc] init];
     imageView.contentMode = UIViewContentModeScaleAspectFill;
     imageView.clipsToBounds = YES;
     [self.view addSubview:imageView];
     
     if ([_imageUrl hasSuffix:@".gif"]) {
+        label.hidden = NO;
         [self requestGif];
     } else {
         [self requestImage];

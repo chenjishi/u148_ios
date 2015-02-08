@@ -31,7 +31,11 @@
         self.reviewsLabel.textAlignment = NSTextAlignmentRight;
         [self addSubview:self.reviewsLabel];
         
-        self.backgroundView.backgroundColor = [UIColor clearColor];
+//        self.separatorView = [[UIView alloc] init];
+//        self.separatorView.backgroundColor = [UIColor colorWithRed:225.0f/255 green:225.0f/255 blue:225.0f/255 alpha:1];
+//        [self addSubview:self.separatorView];
+        
+        self.backgroundView.backgroundColor = [UIColor clearColor];       
     }
     return self;
 }
@@ -47,6 +51,7 @@
     self.textLabel.frame = CGRectMake(x, rect.origin.y,
                                       self.frame.size.width - x - 8, 15);
     
+    
     self.detailTextLabel.frame = CGRectMake(x, self.textLabel.frame.origin.y
                                             + self.textLabel.frame.size.height + 8,
                                             self.frame.size.width - x - 8, 0);
@@ -55,6 +60,7 @@
     [self.detailTextLabel sizeToFit];
     
     self.reviewsLabel.frame = CGRectMake(x, self.frame.size.height - 16 - 12, self.frame.size.width - x - 8, 12);
+//    self.separatorView.frame = CGRectMake(0, self.frame.size.height - 1, self.frame.size.width, 1);
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated

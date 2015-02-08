@@ -18,6 +18,7 @@
 #import "RegisterViewController.h"
 #import "FeedsViewController.h"
 #import "TabIndicator.h"
+#import "SearchViewController.h"
 
 #define LOGIN_URL @"http://api.u148.net/json/login"
 
@@ -51,6 +52,12 @@
     [menuButton addTarget:self action:@selector(showMenu) forControlEvents:UIControlEventTouchUpInside];
     menuButton.frame = CGRectMake(0, 0, 26, 26);
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:menuButton];
+    
+    UIButton *searchButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [searchButton setImage:[UIImage imageNamed:@"ic_nav_search"] forState:UIControlStateNormal];
+    [searchButton addTarget:self action:@selector(startSearch) forControlEvents:UIControlEventTouchUpInside];
+    searchButton.frame = CGRectMake(0, 0, 26, 26);
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:searchButton];
         
     _contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64)];
     _contentView.backgroundColor = [UIColor colorWithRed:246.0f/255 green:246.0f/255 blue:246.0f/255 alpha:1.0f];
@@ -283,6 +290,12 @@
         [self.menuViewController.view removeFromSuperview];
         isMenuShow = NO;
     }];
+}
+
+- (void)startSearch
+{
+    SearchViewController *viewController = [[SearchViewController alloc] init];
+    [self.navigationController pushViewController:viewController animated:YES];
 }
 
 - (void)showMenu

@@ -199,7 +199,7 @@
     int startX = 24.0f;
 	int endX = round(random() % 320);
     double scale = 1 / round(random() % 80) + 1.0;
-	double speed = 1 / round(random() % 100) + 1.0;
+   	double speed = 1 / round(random() % 100) + 1.0;
 	
 	bubbleView.frame = CGRectMake(startX, self.view.frame.size.height - 40, 101.0 * scale, 101.0 * scale);
     

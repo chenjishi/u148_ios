@@ -13,5 +13,6 @@
 
 @property (nonatomic, strong) UILabel *reviewsLabel;
 @property (nonatomic, strong) FLAnimatedImageView *postImage;
+@property (nonatomic, strong) UIView *separatorView;
 
 @end

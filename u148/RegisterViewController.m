@@ -8,12 +8,12 @@
 
 #import "RegisterViewController.h"
 #import "QuartzCore/QuartzCore.h"
-#import "FUIButton.h"
 #import "MBProgressHUD.h"
 #import "User.h"
 #import "UAccountManager.h"
 #import "AFHTTPRequestOperationManager.h"
 #import "PrivacyViewController.h"
+#import "UIImage+Color.h"
 
 #define URL_REGISTER @"http://api.u148.net/json/register"
 
@@ -55,14 +55,18 @@
     [self.view addSubview:nameField];
     
     CGRect rect4 = CGRectMake(8, rect3.origin.y + rect3.size.height + 16, self.view.frame.size.width - 16, 44);
-    FUIButton *button = [FUIButton buttonWithType:UIButtonTypeCustom];
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.frame = rect4;
+    CALayer *layer = [button layer];
+    [layer setMasksToBounds:YES];
+    [layer setCornerRadius:4.0f];
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [button setTitle:@"完  成" forState:UIControlStateNormal];
-    button.titleLabel.font = [UIFont systemFontOfSize:16.0f];
-    button.buttonColor = [UIColor colorWithRed:255.0/255.0 green:153.0/255.0 blue:0/255.0 alpha:1.0];
-    button.shadowColor = [UIColor colorWithRed:230.0/255.0 green:138.0/255.0 blue:1/255.0 alpha:1.0];
-    button.shadowHeight = 2.0f;
-    button.cornerRadius = 4.0f;
+    button.titleLabel.font = [UIFont systemFontOfSize:18.0f];
+    [button setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithRed:255.0f/255 green:153.0f/255 blue:0 alpha:1.0f]]
+                      forState:UIControlStateNormal];
+    [button setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithRed:212.0f/255 green:128.0f/255 blue:0 alpha:1.0f]]
+                      forState:UIControlStateHighlighted];
     [button addTarget:self action:@selector(onSubmitButtonClicked) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:button];
     

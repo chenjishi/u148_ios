@@ -15,7 +15,7 @@
 #import "QuartzCore/QuartzCore.h"
 #import "UAccountManager.h"
 #import "MBProgressHUD.h"
-#import "FUIButton.h"
+#import "UIImage+Color.h"
 
 #define BASE_URL @"http://api.u148.net/json/get_comment/%@/%i"
 #define COMMENT_URL @"http://api.u148.net/json/comment"
@@ -95,19 +95,24 @@
     mTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     mTextField.autocorrectionType = UITextAutocorrectionTypeNo;
     mTextField.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    mTextField.returnKeyType = UIReturnKeyDone;
     mTextField.placeholder = @"写下你的评论";
     mTextField.delegate = self;
     [commentView addSubview:mTextField];
     
-    FUIButton *sendButton = [FUIButton buttonWithType:UIButtonTypeCustom];
+    UIButton *sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
     sendButton.frame = CGRectMake(mTextField.frame.origin.x + mTextField.frame.size.width + 8,
                                   7, 50, 34);
     [sendButton setTitle:@"发送" forState:UIControlStateNormal];
     sendButton.titleLabel.font = [UIFont systemFontOfSize:14.0f];
-    sendButton.buttonColor = [UIColor colorWithRed:255.0/255.0 green:153.0/255.0 blue:0/255.0 alpha:1.0];
-    sendButton.shadowColor = [UIColor colorWithRed:230.0/255.0 green:138.0/255.0 blue:1/255.0 alpha:1.0];
-    sendButton.shadowHeight = 2.0f;
-    sendButton.cornerRadius = 4.0f;
+    CALayer *layer = [sendButton layer];
+    [layer setMasksToBounds:YES];
+    [layer setCornerRadius:4.0f];
+    [sendButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [sendButton setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithRed:255.0f/255 green:153.0f/255 blue:0 alpha:1.0f]]
+                      forState:UIControlStateNormal];
+    [sendButton setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithRed:212.0f/255 green:128.0f/255 blue:0 alpha:1.0f]]
+                      forState:UIControlStateHighlighted];
     [sendButton addTarget:self action:@selector(onCommentButtonClicked) forControlEvents:UIControlEventTouchUpInside];
     [commentView addSubview:sendButton];
     
@@ -408,8 +413,9 @@
                      value:[UIColor colorWithRed:255.0/255.0 green:153.0/255.0 blue:0/255.0 alpha:1.0]
                      range:NSMakeRange(0, len)];
     
-    [cell.imageView setImageWithURL:[NSURL URLWithString:comment.user.icon]
-                   placeholderImage:[UIImage imageNamed:@"user_default"]];
+    NSString *imageUrl = comment.user.icon;
+    [cell.imageView setImageWithURL:[NSURL URLWithString:imageUrl] placeholderImage:[UIImage imageNamed:@"ic_place_holder.png"]];
+    
     cell.textLabel.attributedText = userInfo;
     
     NSString *content = comment.contents;
@@ -433,6 +439,17 @@
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [cell setBackgroundColor:[UIColor clearColor]];
+    if ([cell respondsToSelector:@selector(setSeparatorInset:)]) {
+        [cell setSeparatorInset:UIEdgeInsetsZero];
+    }
+    
+    if ([cell respondsToSelector:@selector(setPreservesSuperviewLayoutMargins:)]) {
+        [cell setPreservesSuperviewLayoutMargins:NO];
+    }
+    
+    if ([cell respondsToSelector:@selector(setLayoutMargins:)]) {
+        [cell setLayoutMargins:UIEdgeInsetsZero];
+    }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

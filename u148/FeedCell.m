@@ -44,7 +44,7 @@
 {
     [super layoutSubviews];
     
-    CGRect rect = CGRectMake(8, 16, 80, 87);
+    CGRect rect = CGRectMake(8, 16, 90, 60);
     self.postImage.frame = rect;
     
     int x = rect.origin.x + rect.size.width + 8;

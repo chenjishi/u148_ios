@@ -82,7 +82,7 @@
     
     shakeLabel = [[UILabel alloc] initWithFrame:CGRectMake(135.0f, self.view.frame.size.height - 49.0f - 50.0f, 0, 0)];
     shakeLabel.backgroundColor = [UIColor clearColor];
-    shakeLabel.text = @"傻诗~";
+    shakeLabel.text = @"JISHI CHEN~";
     shakeLabel.textColor = [UIColor whiteColor];
     shakeLabel.font = [UIFont systemFontOfSize:16.0f];
     [shakeLabel sizeToFit];
@@ -249,7 +249,7 @@
 - (void)showPopwindow
 {
     if (!popwindow) {
-        popwindow = [[CustomIOS7AlertView alloc] init];
+        popwindow = [[CustomIOSAlertView alloc] init];
         
         UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 8, 216, 360)];
         
@@ -295,11 +295,11 @@
         
         currentIndex += 1;
     } else {
-        NSString *tips = @"This Is For Yingna Chen, The Girl I Met Who Brights My Life";
+        NSString *tips = @"This is a easter egg, you found it!";
         NSMutableAttributedString *title = [[NSMutableAttributedString alloc] initWithString:tips];
         [title addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [tips length])];
         mUILabel.text = tips;
-        mImageView.image = [UIImage imageNamed:@"yingna1.jpg"];
+        mImageView.image = [UIImage imageNamed:@"jishi.jpg"];
     }
     
     mUILabel.frame = CGRectMake(8, mImageView.frame.origin.y + mImageView.frame.size.height + 8, 216 - 16, 0);

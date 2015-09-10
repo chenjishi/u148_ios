@@ -13,7 +13,7 @@
 #import "UAccountManager.h"
 #import "MBProgressHUD.h"
 #import "FavoriteViewController.h"
-#import "CustomIOS7AlertView.h"
+#import "CustomIOSAlertView.h"
 #import "SurprizeViewController.h"
 #import "RegisterViewController.h"
 #import "FeedsViewController.h"
@@ -322,7 +322,7 @@
 
 - (void)showAboutDialog
 {
-    aboutDialog = [[CustomIOS7AlertView alloc] init];
+    aboutDialog = [[CustomIOSAlertView alloc] init];
     NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
     
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 8, 240, 190)];
@@ -356,7 +356,7 @@
     [aboutDialog setButtonTitles:[NSArray arrayWithObject:@"关闭"]];
     [aboutDialog setUseMotionEffects:YES];
     
-    [aboutDialog setOnButtonTouchUpInside:^(CustomIOS7AlertView *alertView, int buttonIndex) {
+    [aboutDialog setOnButtonTouchUpInside:^(CustomIOSAlertView *alertView, int buttonIndex) {
         [alertView close];
     }];
     

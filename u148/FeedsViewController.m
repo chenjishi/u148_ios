@@ -42,6 +42,11 @@ static NSString* const feedCellIdentifier = @"feedCell";
     [paragraphStyle setLineSpacing:4];
     page = 1;
     
+    long long ago;
+    ago = 5;
+    
+    double kill;
+    
     categories = @{@0 : @"首页", @3 : @"图画", @6 : @"文字",
                    @7 : @"杂粹", @9 : @"集市", @8 : @"漂流",
                    @4 : @"游戏", @2 : @"影像", @5 : @"音频",

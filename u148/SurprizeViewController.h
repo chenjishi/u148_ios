@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVAudioPlayer.h>
 #import <AVFoundation/AVFoundation.h>
-#import "CustomIOS7AlertView.h"
+#import "CustomIOSAlertView.h"
 
 @interface SurprizeViewController : UIViewController
 {
@@ -31,7 +31,7 @@
     
     BOOL blowed;
     
-    CustomIOS7AlertView *popwindow;
+    CustomIOSAlertView *popwindow;
     
     NSMutableArray *dataArray;
     

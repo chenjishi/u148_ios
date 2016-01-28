@@ -10,6 +10,7 @@
 #import "FeedsViewController.h"
 #import "RootViewController.h"
 #import "Flurry.h"
+#import "SlideNavigationController.h"
 
 #define kAppKey @"1792649719"
 #define kRedirectURI @"https://api.weibo.com/oauth2/default.html"
@@ -44,7 +45,7 @@
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     
     RootViewController *rootViewController = [[RootViewController alloc] initWithViewControllers:viewControllers];
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
+    SlideNavigationController *navController = [[SlideNavigationController alloc] initWithRootViewController:rootViewController];
     
     self.window.rootViewController = navController;
     

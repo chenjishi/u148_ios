@@ -9,17 +9,15 @@
 #import <UIKit/UIKit.h>
 @class User;
 
-@protocol SlideMenuDelegate <NSObject>
+@protocol OnMenuDelegate <NSObject>
 
-@required
-
-- (void)onMenuClicked:(NSUInteger)index;
+- (void)onMenuClickedAt:(NSInteger)index;
 
 @end
 
 @interface MenuViewController : UITableViewController
 
-@property (assign, nonatomic) id<SlideMenuDelegate> delegate;
+@property (nonatomic, strong) id<OnMenuDelegate> delegate;
 
 - (void)refreshMenu;
 

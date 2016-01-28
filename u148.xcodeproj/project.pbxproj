@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4001C7491C5A303700390917 /* SlideNavigationContorllerAnimatorSlide.m in Sources */ = {isa = PBXBuildFile; fileRef = 4001C7461C5A303700390917 /* SlideNavigationContorllerAnimatorSlide.m */; };
+		4001C74A1C5A303700390917 /* SlideNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4001C7481C5A303700390917 /* SlideNavigationController.m */; };
 		401BE46B1995BB60005A585D /* dolphin1.png in Resources */ = {isa = PBXBuildFile; fileRef = 401BE4631995BB60005A585D /* dolphin1.png */; };
 		401BE46C1995BB60005A585D /* dolphin2.png in Resources */ = {isa = PBXBuildFile; fileRef = 401BE4641995BB60005A585D /* dolphin2.png */; };
 		401BE46D1995BB60005A585D /* dolphin3.png in Resources */ = {isa = PBXBuildFile; fileRef = 401BE4651995BB60005A585D /* dolphin3.png */; };
@@ -137,6 +139,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4001C7441C5A303700390917 /* SlideNavigationContorllerAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideNavigationContorllerAnimator.h; sourceTree = "<group>"; };
+		4001C7451C5A303700390917 /* SlideNavigationContorllerAnimatorSlide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideNavigationContorllerAnimatorSlide.h; sourceTree = "<group>"; };
+		4001C7461C5A303700390917 /* SlideNavigationContorllerAnimatorSlide.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideNavigationContorllerAnimatorSlide.m; sourceTree = "<group>"; };
+		4001C7471C5A303700390917 /* SlideNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideNavigationController.h; sourceTree = "<group>"; };
+		4001C7481C5A303700390917 /* SlideNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideNavigationController.m; sourceTree = "<group>"; };
 		401BE4631995BB60005A585D /* dolphin1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dolphin1.png; sourceTree = "<group>"; };
 		401BE4641995BB60005A585D /* dolphin2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dolphin2.png; sourceTree = "<group>"; };
 		401BE4651995BB60005A585D /* dolphin3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dolphin3.png; sourceTree = "<group>"; };
@@ -531,6 +538,11 @@
 		4077EF99197B96DE00FDED39 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				4001C7441C5A303700390917 /* SlideNavigationContorllerAnimator.h */,
+				4001C7451C5A303700390917 /* SlideNavigationContorllerAnimatorSlide.h */,
+				4001C7461C5A303700390917 /* SlideNavigationContorllerAnimatorSlide.m */,
+				4001C7471C5A303700390917 /* SlideNavigationController.h */,
+				4001C7481C5A303700390917 /* SlideNavigationController.m */,
 				40450909197698AC00010684 /* FeedsViewController.h */,
 				4045090A197698AC00010684 /* FeedsViewController.m */,
 				4077EF9A197B971600FDED39 /* RootViewController.h */,
@@ -846,6 +858,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4001C74A1C5A303700390917 /* SlideNavigationController.m in Sources */,
 				4075353A1979493300356778 /* AFHTTPRequestOperation.m in Sources */,
 				40CFDED0197A42240032B212 /* Feed.m in Sources */,
 				403AC9481981064800AE28DE /* NSString+HTML.m in Sources */,
@@ -858,6 +871,7 @@
 				40CFDEDA197A51160032B212 /* FeedCell.m in Sources */,
 				40A770AF198C8E9D00AEAE96 /* MenuCell.m in Sources */,
 				4075355A19794C7900356778 /* UIProgressView+AFNetworking.m in Sources */,
+				4001C7491C5A303700390917 /* SlideNavigationContorllerAnimatorSlide.m in Sources */,
 				40DC1AB2198F8C96003939F4 /* RegisterViewController.m in Sources */,
 				403FD8AE1A82560400B5F980 /* SearchViewController.m in Sources */,
 				40CDD5CD1998DB8C0005EF9C /* Bubble.m in Sources */,
@@ -1015,6 +1029,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "u148/u148-Prefix.pch";
 				INFOPLIST_FILE = "u148/u148-Info.plist";
@@ -1041,6 +1056,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "u148/u148-Prefix.pch";
 				INFOPLIST_FILE = "u148/u148-Info.plist";

@@ -90,13 +90,16 @@
     }
     
     self.menuViewController = [[MenuViewController alloc] init];
+    self.menuViewController.view.frame = CGRectMake(0, 0, 200.f, self.view.frame.size.height);
     self.menuViewController.delegate = self;
-    self.menuViewController.view.frame = CGRectMake(-200, 64, 200, self.view.frame.size.height - 64);
-    
-    isMenuShow = NO;
-    tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideMenu)];
+    [SlideNavigationController sharedInstance].leftMenu = self.menuViewController;
+    [SlideNavigationController sharedInstance].menuRevealAnimationDuration = .18;
     
     [self refreshTableView:0];
+}
+
+- (BOOL)slideNavigationControllerShouldDisplayLeftMenu {
+    return YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -205,8 +208,7 @@
     }
 }
 
-- (void)onMenuClicked:(NSUInteger)index
-{
+- (void)onMenuClickedAt:(NSInteger)index {
     User *user = [[UAccountManager sharedManager] getUserAccount];
     BOOL isLogin = user && user.token.length > 0;
     
@@ -240,8 +242,6 @@
         [self showToast:@"账号已退出"];
         [self.menuViewController refreshMenu];
     }
-    
-    [self hideMenu];
 }
 
 - (void)openRegister
@@ -280,44 +280,15 @@
     [self.navigationController pushViewController:favoriteController animated:YES];
 }
 
-- (void)hideMenu
-{
-    [UIView animateWithDuration:0.3 animations:^{
-        _contentView.frame = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64);
-        self.menuViewController.view.frame = CGRectMake(-200, 64, 200, self.view.frame.size.height - 64);
-    } completion:^(BOOL finished) {
-        [_contentView removeGestureRecognizer:tapRecognizer];
-        [self.menuViewController.view removeFromSuperview];
-        isMenuShow = NO;
-    }];
-}
-
 - (void)startSearch
 {
     SearchViewController *viewController = [[SearchViewController alloc] init];
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
-- (void)showMenu
-{
-    [self.view insertSubview:self.menuViewController.view aboveSubview:_contentView];
-    [UIView animateWithDuration:0.3 animations:^{
-        if (isMenuShow) {
-            _contentView.frame = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64);
-            self.menuViewController.view.frame = CGRectMake(-200, 64, 200, self.view.frame.size.height - 64);
-            [_contentView removeGestureRecognizer:tapRecognizer];
-        } else{
-            CGRect rect = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64);
-            _contentView.frame = CGRectOffset(rect, 200, 0);
-            self.menuViewController.view.frame = CGRectMake(0, 64, 200, self.view.frame.size.height - 64);
-            [_contentView addGestureRecognizer:tapRecognizer];
-        }
-    } completion:^(BOOL finished) {
-        if (isMenuShow) {
-            [self.menuViewController.view removeFromSuperview];
-        }
-        isMenuShow = !isMenuShow;
-    }];
+- (void)showMenu {
+    SlideNavigationController *slideController = [SlideNavigationController sharedInstance];
+    [slideController toggleLeftMenu];
 }
 
 - (void)showAboutDialog
@@ -405,10 +376,5 @@
     if (feedController) {
         [feedController requestData];
     }
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning]; 
 }
 @end

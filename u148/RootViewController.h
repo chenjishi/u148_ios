@@ -10,17 +10,16 @@
 #import "MenuViewController.h"
 #import "TabGroupView.h"
 #import <MessageUI/MessageUI.h>
+#import "SlideNavigationController.h"
+
 @class CustomIOSAlertView;
 
-@interface RootViewController : UIViewController <UIAlertViewDelegate, UIScrollViewDelegate,
-SlideMenuDelegate, UIAlertViewDelegate, MFMailComposeViewControllerDelegate, TabBarDelegate>
+@interface RootViewController : UIViewController <UIAlertViewDelegate, UIScrollViewDelegate, UIAlertViewDelegate,
+MFMailComposeViewControllerDelegate, TabBarDelegate, SlideNavigationControllerDelegate, OnMenuDelegate>
 {
     NSInteger tabIndex;
-    BOOL isMenuShow;
     int clickCount;
     CustomIOSAlertView *aboutDialog;
-    
-    UITapGestureRecognizer *tapRecognizer;
     
     CGFloat tabWidth;
     NSInteger tabCount;

@@ -32,7 +32,6 @@
 @end
 
 @implementation MenuViewController
-@synthesize delegate = _delegate;
 
 - (void)viewDidLoad
 {
@@ -101,9 +100,9 @@
 - (void)onButtonClicked:(id)sender
 {
     UIButton *button = (UIButton *)sender;
-    NSUInteger tag = button.tag;
-    if (_delegate) {
-        [_delegate onMenuClicked:tag];
+    NSInteger tag = button.tag;
+    if (self.delegate) {
+        [self.delegate onMenuClickedAt:tag];
     }
 }
 
@@ -179,8 +178,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    if (_delegate) {
-        [_delegate onMenuClicked:indexPath.row];
+    if (self.delegate) {
+        [self.delegate onMenuClickedAt:indexPath.row];
     }
 }
 @end

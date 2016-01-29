@@ -18,6 +18,7 @@
 #import "FeedsViewController.h"
 #import "TabIndicator.h"
 #import "SearchViewController.h"
+#import "Flurry.h"
 
 #define LOGIN_URL @"http://api.u148.net/json/login"
 
@@ -286,8 +287,9 @@
     [self.navigationController pushViewController:favoriteController animated:YES];
 }
 
-- (void)startSearch
-{
+- (void)startSearch {
+    [Flurry logEvent:@"search_button_click"];
+    
     SearchViewController *viewController = [[SearchViewController alloc] init];
     [self.navigationController pushViewController:viewController animated:YES];
 }

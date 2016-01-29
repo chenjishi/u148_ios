@@ -15,16 +15,13 @@
 #import "PrivacyViewController.h"
 #import "UIImage+Color.h"
 
-@interface RegisterViewController ()
-{
+@implementation RegisterViewController {
     UITextField *emailField;
     UITextField *passwordField;
     UITextField *nameField;
+    
+    MBProgressHUD *progress;
 }
-
-@end
-
-@implementation RegisterViewController
 
 - (void)viewDidLoad
 {
@@ -87,6 +84,11 @@
     [self.view addSubview:privacyButton];
 }
 
+- (void)hudWasHidden:(MBProgressHUD *)hud {
+    [progress removeFromSuperview];
+    progress = nil;
+}
+
 - (void)onPrivacyClicked
 {
     PrivacyViewController *viewController = [[PrivacyViewController alloc] init];
@@ -132,9 +134,14 @@
 }
 
 - (void)regist:(NSString *)email withPassword:(NSString *)password andName:(NSString *)name {
-    NSDictionary *params = @{@"email" : [email stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
-                             @"password" : [password stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
-                             @"nickname" : [name stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+    progress = [[MBProgressHUD alloc] initWithView:self.view];
+    [self.view addSubview:progress];
+    progress.delegate = self;
+    [progress show:YES];
+
+    NSDictionary *params = @{@"email" : email,
+                             @"password" : password,
+                             @"nickname" : name,
                              @"client" : @"iPhone"};
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
@@ -144,6 +151,7 @@
        parameters:params
          progress:nil
           success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+              [progress hide:YES];
               if ([responseObject isKindOfClass:[NSDictionary class]] == NO) return;
               
               NSDictionary *dict = (NSDictionary *) responseObject;
@@ -158,6 +166,7 @@
                   [self.navigationController popViewControllerAnimated:YES];
               }
           } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+              [progress hide:YES];
               [self showToast:@"注册失败，请稍后再试"];
           }];
 }

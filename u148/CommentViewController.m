@@ -7,7 +7,7 @@
 //
 
 #import "CommentViewController.h"
-#import "AFHTTPRequestOperationManager.h"
+#import "AFHTTPSessionManager.h"
 #import "Comment.h"
 #import "UIImageView+AFNetworking.h"
 #import "User.h"
@@ -18,16 +18,28 @@
 #import "UIImage+Color.h"
 
 #define BASE_URL @"http://api.u148.net/json/get_comment/%@/%i"
-#define COMMENT_URL @"http://api.u148.net/json/comment"
-#define LOGIN_URL @"http://api.u148.net/json/login"
 
 #define TAG_HUD 101
 
-@interface CommentViewController ()
-
-@end
-
-@implementation CommentViewController
+@implementation CommentViewController {
+    BOOL isKeyboardShow;
+    
+    UITableView *mTableView;
+    UIView *mFootView;
+    UITextField *mTextField;
+    
+    NSMutableArray *dataArray;
+    NSDateFormatter *dateFormatter;
+    
+    NSRegularExpression *contentRegex;
+    
+    NSString *replyId;
+    User *mUser;
+    
+    MBProgressHUD *progress;
+    
+    int page;
+}
 
 - (void)viewDidLoad
 {
@@ -243,57 +255,69 @@
     [self request:NO];
 }
 
-- (void)login:(NSString *)name withPassword:(NSString *)password
-{
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+- (void)login:(NSString *)name withPassword:(NSString *)password {
+    NSDictionary *params = @{@"email" : [name stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                             @"password" : [password stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]};
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
-    NSDictionary *params = @{@"email" : name, @"password" : password};
-    [manager POST:[NSString stringWithFormat:LOGIN_URL] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *dict = (NSDictionary *) responseObject;
-            NSDictionary *data = [dict objectForKey:@"data"];
-            
-            User *user = [User alloc];
-            user.icon = [data objectForKey:@"icon"];
-            user.nickname = [data objectForKey:@"nickname"];
-            user.sexStr = [data objectForKey:@"sex"];
-            user.token = [data objectForKey:@"token"];
-            
-            mUser = user;
-            [[UAccountManager sharedManager] setUserAccount:mUser];
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"fail %@", error);
-        
-    }];
+    [manager POST:@"http://api.u148.net/json/login"
+       parameters:params
+         progress:nil
+          success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+              if ([responseObject isKindOfClass:[NSDictionary class]] == NO) return;
+              
+              NSDictionary *dict = (NSDictionary *) responseObject;
+              NSInteger code = [[dict objectForKey:@"code"] integerValue];
+              NSString *msg = @"登陆成功";
+              if (code == 0) {
+                  User *user = [[User alloc] initWithDictionary:[dict objectForKey:@"data"]];
+                  [[UAccountManager sharedManager] setUserAccount:user];
+              } else {
+                  msg = [dict objectForKey:@"msg"];
+              }
+              [self showToast:msg];}
+          failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+              [self showToast:@"登陆失败，请检查用户名或密码，或者网络:)"];
+          }];
 }
 
-- (void)sendComment:(NSString *)content
-{
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+- (void)hudWasHidden:(MBProgressHUD *)hud {
+    [progress removeFromSuperview];
+    progress = nil;
+}
+
+- (void)sendComment:(NSString *)content {
+    progress = [[MBProgressHUD alloc] initWithView:self.view];
+    [self.view addSubview:progress];
+    progress.delegate = self;
+    [progress show:YES];
     
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithCapacity:0];
     [params setObject:self.articleId forKey:@"id"];
     [params setObject:mUser.token forKey:@"token"];
     [params setObject:@"iPhone" forKey:@"client"];
     [params setObject:content forKey:@"content"];
-    if (replyId) {
-        [params setObject:replyId forKey:@"review_id"];
-    }
+    if (replyId) [params setObject:replyId forKey:@"review_id"];    
     
-    [manager POST:[NSString stringWithFormat:COMMENT_URL]
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+    
+    [manager POST:@"http://api.u148.net/json/comment"
        parameters:params
-          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+         progress:nil
+          success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+              [progress hide:YES];
               [self showToast:@"评论成功"];
               replyId = nil;
               mTextField.placeholder = @"写下你的评论";
               mTextField.text = @"";
-              [self request:YES];
-          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              [self request:YES];}
+          failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+              [progress hide:YES];
               [self showToast:@"评论失败，稍后再试"];
           }];
 }
@@ -320,57 +344,47 @@
     }
 }
 
-- (void)request:(BOOL)refresh
-{
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+- (void)request:(BOOL)refresh {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
     [manager GET:[NSString stringWithFormat:BASE_URL, self.articleId, page]
       parameters:nil
-         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        progress:nil
+         success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+             if ([responseObject isKindOfClass:[NSDictionary class]] == NO) return;
+             if (refresh) [dataArray removeAllObjects];
              
-             if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                 if (refresh) {
-                     [dataArray removeAllObjects];
+             NSDictionary *dict = (NSDictionary *) responseObject;
+             NSDictionary *data = [dict objectForKey:@"data"];
+             NSArray *array = [data objectForKey:@"data"];
+             
+             for (NSDictionary *item in array) {
+                 Comment *comment = [[Comment alloc] initWithDictionary:item];
+                 NSString *content = comment.contents;
+                 NSArray *matches = [contentRegex matchesInString:content options:0 range:NSMakeRange(0, content.length)];
+                 for (NSTextCheckingResult *match in matches) {
+                     NSString *s1 = [content substringWithRange:[match rangeAtIndex:1]];
+                     comment.contents = [s1 stringByReplacingOccurrencesOfString:@"<br />" withString:@"\n\n"];
+                     NSString *s2 = [content substringWithRange:[match rangeAtIndex:2]];
+                     comment.reply = [s2 stringByReplacingOccurrencesOfString:@"<br />" withString:@"\n"];
                  }
                  
-                 NSDictionary *dict = (NSDictionary *) responseObject;
-                 NSDictionary *data = [dict objectForKey:@"data"];
-                 NSArray *array = [data objectForKey:@"data"];
-                 
-                 for (NSDictionary *item in array) {
-                     Comment *comment = [[Comment alloc] initWithDictionary:item];
-                     
-                     NSString *content = comment.contents;
-                     
-                     NSArray *matches = [contentRegex matchesInString:content options:0 range:NSMakeRange(0, content.length)];
-                     
-                     for (NSTextCheckingResult *match in matches) {
-                         NSString *s1 = [content substringWithRange:[match rangeAtIndex:1]];
-                         comment.contents = [s1 stringByReplacingOccurrencesOfString:@"<br />" withString:@"\n\n"];
-                         NSString *s2 = [content substringWithRange:[match rangeAtIndex:2]];
-                         comment.reply = [s2 stringByReplacingOccurrencesOfString:@"<br />" withString:@"\n"];
-                     }
-                     
-                     [dataArray addObject:comment];
-                 }
-                 
-                 [mTableView reloadData];
-                 if (array.count >= 30) {
-                     mFootView.hidden = NO;
-                 } else {
-                     mFootView.hidden = YES;
-                 }
+                 [dataArray addObject:comment];
              }
-         }
-         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-             NSLog(@"error %@", error);
+             
+             [mTableView reloadData];
+             if (array.count >= 30) {
+                 mFootView.hidden = NO;
+             } else {
+                 mFootView.hidden = YES;
+             }}
+         failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
          }];
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return dataArray.count;
 }
 

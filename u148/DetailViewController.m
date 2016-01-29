@@ -10,7 +10,7 @@
 #import "Feed.h"
 #import "User.h"
 #import "UAccountManager.h"
-#import "AFHTTPRequestOperationManager.h"
+#import "AFHTTPSessionManager.h"
 #import "PhotoViewController.h"
 #import "CommentViewController.h"
 #import "MBProgressHUD.h"
@@ -20,7 +20,6 @@
 
 #define BASE_URL @"http://api.u148.net/json/article/%@"
 #define URL_FAVORITE_ADD @"http://api.u148.net/json/favourite?id=%@&token=%@"
-#define LOGIN_URL @"http://api.u148.net/json/login"
 
 @interface DetailViewController ()
 
@@ -103,25 +102,22 @@
     shareView = nil;
 }
 
-- (void)request
-{
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+- (void)request {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
     [manager GET:[NSString stringWithFormat:BASE_URL, _feed.feedId]
       parameters:nil
-         success:^(AFHTTPRequestOperation *operation, id responseObject) {
-             if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                 NSDictionary *dict = (NSDictionary *) responseObject;
-                 NSDictionary *data = [dict objectForKey:@"data"];
-                 
-                 NSString *content = [data objectForKey:@"content"];
-                 [self renderPage:content];
-             }
-         }
-         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-             NSLog(@"error %@", error);
+        progress:nil
+         success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+             if ([responseObject isKindOfClass:[NSDictionary class]] == NO) return;
+             
+             NSDictionary *dict = (NSDictionary *) responseObject;
+             NSDictionary *data = [dict objectForKey:@"data"];
+             NSString *content = [data objectForKey:@"content"];
+             [self renderPage:content];}
+         failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
          }];
 }
 
@@ -143,30 +139,31 @@
     }
 }
 
-- (void)login:(NSString *)name withPassword:(NSString *)password
-{
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+- (void)login:(NSString *)name withPassword:(NSString *)password {
+    NSDictionary *params = @{@"email" : [name stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                             @"password" : [password stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]};
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
-    NSDictionary *params = @{@"email" : name, @"password" : password};
-    [manager POST:[NSString stringWithFormat:LOGIN_URL]
+    [manager POST:@"http://api.u148.net/json/login"
        parameters:params
-          success:^(AFHTTPRequestOperation *operation, id responseObject) {
-              if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                  NSDictionary *dict = (NSDictionary *) responseObject;
-                  NSDictionary *data = [dict objectForKey:@"data"];
-                  
-                  User *user = [User alloc];
-                  user.icon = [data objectForKey:@"icon"];
-                  user.nickname = [data objectForKey:@"nickname"];
-                  user.sexStr = [data objectForKey:@"sex"];
-                  user.token = [data objectForKey:@"token"];
-                  
+         progress:nil
+          success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+              if ([responseObject isKindOfClass:[NSDictionary class]] == NO) return;
+              
+              NSDictionary *dict = (NSDictionary *) responseObject;
+              NSInteger code = [[dict objectForKey:@"code"] integerValue];
+              NSString *msg = @"登陆成功";
+              if (code == 0) {
+                  User *user = [[User alloc] initWithDictionary:[dict objectForKey:@"data"]];
                   [[UAccountManager sharedManager] setUserAccount:user];
-                  [self showToast:@"登陆成功"];
-              }}
-          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              } else {
+                  msg = [dict objectForKey:@"msg"];
+              }
+              [self showToast:msg];}
+          failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
               [self showToast:@"登陆失败，请检查用户名或密码，或者网络:)"];
           }];
 }
@@ -211,19 +208,20 @@
     }
 }
 
-- (void)addToFavorites:(NSString *)userToken
-{
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+- (void)addToFavorites:(NSString *)userToken {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
     [manager GET:[NSString stringWithFormat:URL_FAVORITE_ADD, _feed.feedId, userToken]
       parameters:nil
-         success:^(AFHTTPRequestOperation *operation, id responseObject) {
-             [self showToast:@"已移入收藏夹"];}
-         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-             [self showToast:@"服务器繁忙，请稍后再试"];}
-     ];
+        progress:nil
+         success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+             [self showToast:@"已移入收藏夹"];
+         }
+         failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+              [self showToast:@"服务器繁忙，请稍后再试"];
+    }];
 }
 
 - (void)startComment

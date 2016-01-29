@@ -7,7 +7,7 @@
 //
 
 #import "FeedsViewController.h"
-#import "AFHTTPRequestOperationManager.h"
+#import "AFHTTPSessionManager.h"
 #import "Feed.h"
 #import "UIImageView+AFNetworking.h"
 #import "FeedCell.h"
@@ -44,8 +44,6 @@ static NSString* const feedCellIdentifier = @"feedCell";
     
     long long ago;
     ago = 5;
-    
-    double kill;
     
     categories = @{@0 : @"首页", @3 : @"图画", @6 : @"文字",
                    @7 : @"杂粹", @9 : @"集市", @8 : @"漂流",
@@ -97,38 +95,36 @@ static NSString* const feedCellIdentifier = @"feedCell";
     [self request];
 }
 
-- (void)request
-{
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+- (void)request {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
     [manager GET:[NSString stringWithFormat:BASE_URL, self.categoryType, page]
       parameters:nil
-         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        progress:nil
+         success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+             if ([responseObject isKindOfClass:[NSDictionary class]] == NO) return;
              
-             if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                 NSDictionary *dict = (NSDictionary *) responseObject;
-                 NSDictionary *data = [dict objectForKey:@"data"];
-                 NSArray *array = [data objectForKey:@"data"];
-                 
-                 for (NSDictionary *item in array) {
-                     Feed *feed = [[Feed alloc] initWithDictionary:item];
-                     [dataArray addObject:feed];
-                 }
-                 
-                 [self.refreshControl endRefreshing];
-                 [self.tableView reloadData];
-
-                 if (array.count >= 10) {
-                     mFootView.hidden = NO;
-                 } else {
-                     mFootView.hidden = YES;
-                 }
+             NSDictionary *dict = (NSDictionary *) responseObject;
+             NSDictionary *data = [dict objectForKey:@"data"];
+             NSArray *array = [data objectForKey:@"data"];
+             
+             for (NSDictionary *item in array) {
+                 Feed *feed = [[Feed alloc] initWithDictionary:item];
+                 [dataArray addObject:feed];
+             }
+             
+             [self.refreshControl endRefreshing];
+             [self.tableView reloadData];
+             
+             if (array.count >= 10) {
+                 mFootView.hidden = NO;
+             } else {
+                 mFootView.hidden = YES;
              }
          }
-         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-             NSLog(@"error %@", error);
+         failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
          }];
 }
 
@@ -193,7 +189,7 @@ static NSString* const feedCellIdentifier = @"feedCell";
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSURL *url = [NSURL URLWithString:imageUrl];
             NSData *data = [NSData dataWithContentsOfURL:url];
-            animatedImage = [[FLAnimatedImage alloc] initWithAnimatedGIFData:data];
+            animatedImage = [[FLAnimatedImage alloc] initWithAnimatedGIFData:data];           
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 cell.postImage.animatedImage = animatedImage;

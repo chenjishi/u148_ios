@@ -11,11 +11,9 @@
 #import "MBProgressHUD.h"
 #import "User.h"
 #import "UAccountManager.h"
-#import "AFHTTPRequestOperationManager.h"
+#import "AFHTTPSessionManager.h"
 #import "PrivacyViewController.h"
 #import "UIImage+Color.h"
-
-#define URL_REGISTER @"http://api.u148.net/json/register"
 
 @interface RegisterViewController ()
 {
@@ -133,40 +131,33 @@
     [self regist:email withPassword:password andName:name];
 }
 
-- (void)regist:(NSString *)email withPassword:(NSString *)password andName:(NSString *)name
-{
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+- (void)regist:(NSString *)email withPassword:(NSString *)password andName:(NSString *)name {
+    NSDictionary *params = @{@"email" : [email stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                             @"password" : [password stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                             @"nickname" : [name stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                             @"client" : @"iPhone"};
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
-    
-    NSDictionary *params = @{@"email" : email, @"password" : password, @"nickname" : name, @"client" : @"iPhone"};
-    [manager POST:[NSString stringWithFormat:URL_REGISTER]
+    [manager POST:@"http://api.u148.net/json/register"
        parameters:params
-          success:^(AFHTTPRequestOperation *operation, id responseObject) {
-              if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                  NSDictionary *dict = (NSDictionary *) responseObject;
-                  
-                  int code = [[dict objectForKey:@"code"] intValue];
-                  if (code != 0) {
-                      NSString *message = [dict objectForKey:@"msg"];
-                      [self showToast:message];
-                  } else {
-                      NSDictionary *data = [dict objectForKey:@"data"];
-                      
-                      User *user = [[User alloc] init];
-                      user.nickname = [data objectForKey:@"nickname"];
-                      user.sexStr = [data objectForKey:@"sex"];
-                      user.icon = [data objectForKey:@"icon"];
-                      user.token = [data objectForKey:@"token"];
-                      
-                      [[UAccountManager sharedManager] setUserAccount:user];
-                      [self showToast:@"注册成功"];
-                      
-                      [self.navigationController popViewControllerAnimated:YES];
-                  }
+         progress:nil
+          success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+              if ([responseObject isKindOfClass:[NSDictionary class]] == NO) return;
+              
+              NSDictionary *dict = (NSDictionary *) responseObject;
+              int code = [[dict objectForKey:@"code"] intValue];
+              if (code != 0) {
+                  NSString *message = [dict objectForKey:@"msg"];
+                  [self showToast:message];
+              } else {
+                  User *user = [[User alloc] initWithDictionary:[dict objectForKey:@"data"]];
+                  [[UAccountManager sharedManager] setUserAccount:user];
+                  [self showToast:@"注册成功"];
+                  [self.navigationController popViewControllerAnimated:YES];
               }
-          }
-          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+          } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
               [self showToast:@"注册失败，请稍后再试"];
           }];
 }
@@ -222,10 +213,4 @@
     
     [hud hide:YES afterDelay:2];
 }
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-}
-
 @end

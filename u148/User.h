@@ -17,5 +17,9 @@
 @property (nonatomic, strong) NSString *icon;
 
 - (void)encodeWithCoder:(NSCoder *)encoder;
+
 - (id)initWithCoder:(NSCoder *)decoder;
+
+- (id)initWithDictionary:(NSDictionary *)dict;
+
 @end

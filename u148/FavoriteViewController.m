@@ -9,7 +9,7 @@
 #import "FavoriteViewController.h"
 #import "User.h"
 #import "UAccountManager.h"
-#import "AFHTTPRequestOperationManager.h"
+#import "AFHTTPSessionManager.h"
 #import "FavoriteItem.h"
 #import "DetailViewController.h"
 #import "Feed.h"
@@ -53,46 +53,42 @@
     [self request];
 }
 
-- (void)request
-{
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+- (void)request {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
-    
     [manager GET:[NSString stringWithFormat:URL_FAVORITE, page, userToken]
       parameters:nil
-         success:^(AFHTTPRequestOperation *operation, id responseObject) {
-             if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                 NSDictionary *dict = (NSDictionary *) responseObject;
-                 NSDictionary *data = [dict objectForKey:@"data"];
-                 NSArray *array = [data objectForKey:@"data"];
-                 
-                 for (NSDictionary *item in array) {
-                     FavoriteItem *favorite = [[FavoriteItem alloc] initWithDictionary:item];
-                     [dataArray addObject:favorite];
-                 }
-                 
-                 [favoriteTable reloadData];
+        progress:nil
+         success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+             if ([responseObject isKindOfClass:[NSDictionary class]] == NO) return;
+             
+             NSDictionary *dict = (NSDictionary *) responseObject;
+             NSDictionary *data = [dict objectForKey:@"data"];
+             NSArray *array = [data objectForKey:@"data"];
+             
+             for (NSDictionary *item in array) {
+                 FavoriteItem *favorite = [[FavoriteItem alloc] initWithDictionary:item];
+                 [dataArray addObject:favorite];
              }
-         }
-         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-             NSLog(@"error %@", error);
+             
+             [favoriteTable reloadData];}
+         failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
          }];
 }
 
-- (void)deleteFavorite:(NSString *)feedId
-{
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
-    
+- (void)deleteFavorite:(NSString *)feedId {
     User *user = [[UAccountManager sharedManager] getUserAccount];
     
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     [manager GET:[NSString stringWithFormat:URL_FAVORITE_DELETE, feedId, user.token]
       parameters:nil
-         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        progress:nil
+         success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
          }
-         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+         failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
          }];
 }
 

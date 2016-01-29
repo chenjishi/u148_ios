@@ -8,13 +8,16 @@
 
 #import "SearchViewController.h"
 #import "UIImage+Color.h"
-#import "AFHTTPRequestOperationManager.h"
+#import "AFHTTPSessionManager.h"
 #import "Feed.h"
 #import "FeedCell.h"
 #import "FLAnimatedImageView.h"
 #import "FLAnimatedImage.h"
 #import "UIImageView+AFNetworking.h"
 #import "DetailViewController.h"
+#import "UIImage+Color.h"
+#import "SurprizeViewController.h"
+#import "Flurry.h"
 
 #define TAG_SEARCH_FIELD 102
 #define TAG_TABLE_VIEW   103
@@ -22,18 +25,18 @@
 
 static NSString* const feedCellIdentifier = @"feedCell";
 
-@interface SearchViewController () {
+@implementation SearchViewController {
     NSUInteger currentPage;
     NSString *keyword;
     NSDictionary *categories;
     NSMutableParagraphStyle *paragraphStyle;
     
     NSMutableArray *dataArray;
+    
+    NSInteger clickCount;
+    
+    MBProgressHUD *progress;
 }
-
-@end
-
-@implementation SearchViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -110,6 +113,25 @@ static NSString* const feedCellIdentifier = @"feedCell";
     tableView.dataSource = self;
     tableView.tableFooterView = footView;
     [self.view addSubview:tableView];
+    
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    btn.frame = CGRectMake((self.view.frame.size.width - 50.f) / 2, self.view.frame.size.height - 60.f, 50.f, 50.f);
+    [btn setBackgroundImage:[UIImage imageWithColor:[UIColor clearColor]] forState:UIControlStateNormal];
+    [btn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithRed:204.f / 255.f green:204.f / 255.f blue:204.f / 255.f alpha:0.4f]] forState:UIControlStateHighlighted];
+    [btn addTarget:self action:@selector(onButtonClicked) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btn];
+}
+
+- (void)onButtonClicked {
+    [Flurry logEvent:@"easter_egg_clicked"];
+    
+    clickCount += 1;
+    if (clickCount == 8) {
+        [Flurry logEvent:@"easter_egg_triggered"];
+        clickCount = 0;
+        SurprizeViewController *surprizeController = [[SurprizeViewController alloc] init];        
+        [self presentViewController:surprizeController animated:YES completion:nil];
+    }
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -123,38 +145,45 @@ static NSString* const feedCellIdentifier = @"feedCell";
     [self request];
 }
 
+- (void)hudWasHidden:(MBProgressHUD *)hud {
+    [progress removeFromSuperview];
+    progress = nil;
+}
+
 - (void)request {
-    NSString *url = [NSString stringWithFormat:@"http://api.u148.net/json/search/%ld?keyword=%@", currentPage, keyword];
+    progress = [[MBProgressHUD alloc] initWithView:self.view];
+    [self.view addSubview:progress];
+    progress.delegate = self;
+    [progress show:YES];
     
-    AFHTTPRequestOperationManager *request = [AFHTTPRequestOperationManager manager];
-    request.responseSerializer = [AFJSONResponseSerializer serializer];
-    request.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
-    [request GET:url
+    keyword = [keyword stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    [manager GET:[NSString stringWithFormat:@"http://api.u148.net/json/search/%ld?keyword=%@", currentPage, keyword]
       parameters:nil
-         success:^(AFHTTPRequestOperation *operation, id responseObject) {
-             if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                 NSDictionary *dict = (NSDictionary *) responseObject;
-                 NSDictionary *data = [dict objectForKey:@"data"];
-                 NSArray *array = [data objectForKey:@"data"];
-                 
-                 for (NSDictionary *item in array) {
-                     Feed *feed = [[Feed alloc] initWithDictionary:item];
-                     [dataArray addObject:feed];
-                 }
-                 
-                 UIView *footView = [self.view viewWithTag:TAG_FOOT_VIEW];
-                 if (array.count >= 10) {
-                     footView.hidden = NO;
-                 } else {
-                     footView.hidden = YES;
-                 }
-                 
-                 UITableView *tableView = (UITableView *) [self.view viewWithTag:TAG_TABLE_VIEW];
-                 [tableView reloadData];
+        progress:nil
+         success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+             [progress hide:YES];
+             
+             if ([responseObject isKindOfClass:[NSDictionary class]] == NO) return;
+             
+             NSDictionary *dict = (NSDictionary *) responseObject;
+             NSDictionary *data = [dict objectForKey:@"data"];
+             NSArray *array = [data objectForKey:@"data"];
+             for (NSDictionary *item in array) {
+                 Feed *feed = [[Feed alloc] initWithDictionary:item];
+                 [dataArray addObject:feed];
              }
-         }
-         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             
+             UIView *footView = [self.view viewWithTag:TAG_FOOT_VIEW];
+             footView.hidden = array.count < 10;
+             
+             UITableView *tableView = (UITableView *) [self.view viewWithTag:TAG_TABLE_VIEW];
+             [tableView reloadData];}
+         failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+             [progress hide:YES];
          }];
 }
 

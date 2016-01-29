@@ -9,17 +9,36 @@
 #import "SurprizeViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import "UIImageView+AFNetworking.h"
-#import "AFHTTPRequestOperationManager.h"
+#import "AFHTTPSessionManager.h"
 #import "Bubble.h"
+#import "FLAnimatedImage.h"
 #import <AudioToolbox/AudioToolbox.h>
 
 @import AVFoundation;
 
-@interface SurprizeViewController ()
-
-@end
-
-@implementation SurprizeViewController
+@implementation SurprizeViewController {
+    UIImageView *dolphin;
+    UIImageView *bubbleBreakView;
+    
+    UIView *containerView;
+    
+    AVAudioPlayer *waterPlayer;
+    
+    UIImage *bubbleImage;
+    
+    UIImageView *mImageView;
+    UILabel *mUILabel;
+    
+    UIButton *exitButton;
+    
+    BOOL blowed;
+    
+    CustomIOSAlertView *popwindow;
+    
+    NSMutableArray *dataArray;
+    
+    int currentIndex;
+}
 
 - (void)viewDidLoad
 {
@@ -29,47 +48,32 @@
         self.edgesForExtendedLayout = UIRectEdgeNone;
     }
     
-    //handle for iphone4 and iphone5
-    UIImage *image;
-    CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
-    CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
-    if (screenHeight > 480.0f) {
-        image = [UIImage imageNamed:@"bubble_bkg5.jpg"];
-    } else {
-        image = [UIImage imageNamed:@"bubble_bkg4.jpg"];
-    }
-    
     dataArray = [[NSMutableArray alloc] initWithCapacity:0];
     
     currentIndex = 0;
     
     bubbleImage = [UIImage imageNamed:@"ic_bubble.png"];
     
-    UIImageView *bgImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
-    bgImage.image = image;
+    UIImageView *bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"marine"]];
+    bgImage.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
     [self.view addSubview:bgImage];
-    
-    NSMutableArray *dolphins = [[NSMutableArray alloc] initWithCapacity:0];
-    for (int i = 1; i < 10; i++) {
-        [dolphins addObject:[UIImage imageNamed:[NSString stringWithFormat:@"dolphin%d.png", i]]];
-    }
     
     NSMutableArray *bubbles = [[NSMutableArray alloc] initWithCapacity:0];
     for (int i = 1; i < 4; i++) {
         [bubbles addObject:[UIImage imageNamed:[NSString stringWithFormat:@"bubble_break%d.png", i]]];
     }
     
+    NSString *gifImagePath = [[NSBundle mainBundle] pathForResource:@"nemo" ofType:@"gif"];
+    NSData *gifData = [NSData dataWithContentsOfFile:gifImagePath];
+    FLAnimatedImageView *nemoView = [[FLAnimatedImageView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 24.f - 83.f,
+                                                                                          self.view.frame.size.height - 100.f, 166.f / 2, 85.f / 2)];
+    nemoView.animatedImage = [[FLAnimatedImage alloc] initWithAnimatedGIFData:gifData];
+    [self.view addSubview:nemoView];
+    
     dolphin = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 120) / 2, 40, 100, 122)];
     dolphin.image = [UIImage imageNamed:@"dolphin_cry.png"];
     [dolphin setHidden:YES];
     [self.view addSubview:dolphin];
-    
-    UIImageView *animateView = [[UIImageView alloc] initWithFrame:CGRectMake(10.0f, self.view.frame.size.height - 49.0f - 95.0f + 20.0f, 113.0f, 95.0f)];
-    animateView.animationImages = dolphins;
-    animateView.animationDuration = 2;
-    animateView.animationRepeatCount = 0;
-    [animateView startAnimating];
-    [self.view addSubview:animateView];
     
     bubbleBreakView = [[UIImageView alloc] initWithFrame:CGRectZero];
     bubbleBreakView.animationImages = bubbles;
@@ -79,14 +83,6 @@
     
     containerView = [[UIView alloc] initWithFrame:self.view.frame];
     [self.view addSubview:containerView];
-    
-    shakeLabel = [[UILabel alloc] initWithFrame:CGRectMake(135.0f, self.view.frame.size.height - 49.0f - 50.0f, 0, 0)];
-    shakeLabel.backgroundColor = [UIColor clearColor];
-    shakeLabel.text = @"JISHI CHEN~";
-    shakeLabel.textColor = [UIColor whiteColor];
-    shakeLabel.font = [UIFont systemFontOfSize:16.0f];
-    [shakeLabel sizeToFit];
-    [self.view addSubview:shakeLabel];
     
     exitButton = [UIButton buttonWithType:UIButtonTypeCustom];
     exitButton.frame = CGRectMake(self.view.frame.size.width - 30 - 10, 40, 30, 30);
@@ -105,44 +101,27 @@
     [NSTimer scheduledTimerWithTimeInterval:(0.7) target:self selector:@selector(onTimer) userInfo:nil repeats:YES];
 }
 
-- (void)request
-{
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+- (void)request {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    
-    [manager GET:[NSString stringWithFormat:@"http://u148.oss-cn-beijing.aliyuncs.com/image/bless"]
+    [manager GET:@"http://u148.oss-cn-beijing.aliyuncs.com/image/easter"
       parameters:nil
-         success:^(AFHTTPRequestOperation *operation, id responseObject) {
-             if ([responseObject isKindOfClass:[NSArray class]]) {
-                 NSArray *data = (NSArray *)responseObject;
-                 
-                 for (NSDictionary *dict in data) {
-                     Bubble *bubble = [[Bubble alloc] initWidthDictionary:dict];
-                     [dataArray addObject:bubble];
-                 }
-             }
-         }
-         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-             NSLog(@"error %@", error);
+        progress:nil
+         success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+             if ([responseObject isKindOfClass:[NSArray class]] == NO) return;
+             
+             NSArray *data = (NSArray *)responseObject;
+             for (NSDictionary *dict in data) {
+                 Bubble *bubble = [[Bubble alloc] initWidthDictionary:dict];
+                 [dataArray addObject:bubble];
+             }}
+         failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
          }];
 }
-
 
 - (void)onExitClicked
 {
     [self dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (void)playShakeLabel
-{
-    CABasicAnimation *shake = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
-    shake.fromValue = [NSNumber numberWithFloat:-0.2];
-    shake.toValue = [NSNumber numberWithFloat:+0.2];
-    shake.duration = 0.2;
-    shake.autoreverses = YES;
-    shake.repeatCount = HUGE_VALF;
-    [shakeLabel.layer addAnimation:shake forKey:@"blowText"];
-    shakeLabel.alpha = 1.0f;
 }
 
 - (void)playWaterSoundOnBackground
@@ -187,7 +166,6 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [self playShakeLabel];
 }
 
 - (void)onTimer
@@ -250,15 +228,16 @@
 {
     if (!popwindow) {
         popwindow = [[CustomIOSAlertView alloc] init];
+        popwindow.backgroundColor = [UIColor whiteColor];
         
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 8, 216, 360)];
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 8, 316, 280)];
         
-        CGRect rect = CGRectMake(8, 0, 200, 300);
+        CGRect rect = CGRectMake(8, 0, 300, 200);
         mImageView = [[UIImageView alloc] initWithFrame:rect];
         [view addSubview:mImageView];
         
         UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        closeButton.frame = CGRectMake(216 - 30, 0, 30, 30);
+        closeButton.frame = CGRectMake(316 - 30, 0, 30, 30);
         
         [closeButton setImage:[UIImage imageNamed:@"icon_exit.png"] forState:UIControlStateNormal];
         [closeButton setImage:[UIImage imageNamed:@"icon_exit_press.png"] forState:UIControlStateHighlighted];
@@ -302,7 +281,7 @@
         mImageView.image = [UIImage imageNamed:@"jishi.jpg"];
     }
     
-    mUILabel.frame = CGRectMake(8, mImageView.frame.origin.y + mImageView.frame.size.height + 8, 216 - 16, 0);
+    mUILabel.frame = CGRectMake(8, mImageView.frame.origin.y + mImageView.frame.size.height + 8, 300, 0);
     mUILabel.numberOfLines = 2;
     [mUILabel sizeToFit];
     

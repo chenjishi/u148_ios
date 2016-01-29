@@ -8,13 +8,12 @@
 
 #import "RootViewController.h"
 #import "MenuViewController.h"
-#import "AFHTTPRequestOperationManager.h"
 #import "User.h"
+#import "AFHTTPSessionManager.h"
 #import "UAccountManager.h"
 #import "MBProgressHUD.h"
 #import "FavoriteViewController.h"
 #import "CustomIOSAlertView.h"
-#import "SurprizeViewController.h"
 #import "RegisterViewController.h"
 #import "FeedsViewController.h"
 #import "TabIndicator.h"
@@ -24,12 +23,15 @@
 
 #define TAB_VIEW_TAG  200
 
-
-@interface RootViewController ()
-
-@end
-
-@implementation RootViewController
+@implementation RootViewController {
+    NSInteger tabIndex;
+    CustomIOSAlertView *aboutDialog;
+    CGFloat tabWidth;
+    NSInteger tabCount;
+    TabIndicator *tabIndicator;
+    UIScrollView *tabScrollView;
+    MenuViewController *menuController;
+}
 
 @synthesize scrollView = _scrollView, controllers = _controllers, contentView = _contentView;
 
@@ -89,10 +91,10 @@
         [self addChildViewController:viewControllers];
     }
     
-    self.menuViewController = [[MenuViewController alloc] init];
-    self.menuViewController.view.frame = CGRectMake(0, 0, 200.f, self.view.frame.size.height);
-    self.menuViewController.delegate = self;
-    [SlideNavigationController sharedInstance].leftMenu = self.menuViewController;
+    menuController = [[MenuViewController alloc] init];
+    menuController.view.frame = CGRectMake(0, 0, 200.f, self.view.frame.size.height);
+    menuController.delegate = self;
+    [SlideNavigationController sharedInstance].leftMenu = menuController;
     [SlideNavigationController sharedInstance].menuRevealAnimationDuration = .18;
     
     [self refreshTableView:0];
@@ -111,9 +113,8 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [self.menuViewController refreshMenu];
+    [menuController refreshMenu];
     tabScrollView.contentSize = CGSizeMake(tabWidth * tabCount, 36);
-
 }
 
 - (void)showLoginDialog
@@ -152,33 +153,35 @@
     }
 }
 
-- (void)login:(NSString *)name withPassword:(NSString *)password
-{
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+- (void)login:(NSString *)name withPassword:(NSString *)password {
+    NSDictionary *params = @{@"email" : [name stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                             @"password" : [password stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]};
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
-    
-    NSDictionary *params = @{@"email" : name, @"password" : password};
-    [manager POST:[NSString stringWithFormat:LOGIN_URL]
+    [manager POST:@"http://api.u148.net/json/login"
        parameters:params
-          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+         progress:nil
+          success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
               if ([responseObject isKindOfClass:[NSDictionary class]]) {
                   NSDictionary *dict = (NSDictionary *) responseObject;
-                  NSDictionary *data = [dict objectForKey:@"data"];
-                  
-                  User *user = [User alloc];
-                  user.icon = [data objectForKey:@"icon"];
-                  user.nickname = [data objectForKey:@"nickname"];
-                  user.sexStr = [data objectForKey:@"sex"];
-                  user.token = [data objectForKey:@"token"];
-                  
-                  [[UAccountManager sharedManager] setUserAccount:user];
-                  [self.menuViewController refreshMenu];
-                  [self showToast:@"登陆成功"];
-              }
-          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                  NSInteger code = [[dict objectForKey:@"code"] integerValue];
+                  NSString *msg = @"登陆成功";
+                  if (code == 0) {
+                      User *user = [[User alloc] initWithDictionary:[dict objectForKey:@"data"]];
+                      
+                      [[UAccountManager sharedManager] setUserAccount:user];
+                      [menuController refreshMenu];
+                  } else {
+                      msg = [dict objectForKey:@"msg"];
+                  }
+                  [self showToast:msg];
+              }}
+          failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
               [self showToast:@"登陆失败，请检查用户名或密码，或者网络:)"];
-          }];
+          }
+     ];
 }
 
 - (void)showToast:(NSString *)tips
@@ -209,6 +212,9 @@
 }
 
 - (void)onMenuClickedAt:(NSInteger)index {
+    SlideNavigationController *slideController = [SlideNavigationController sharedInstance];
+    [slideController toggleLeftMenu];
+    
     User *user = [[UAccountManager sharedManager] getUserAccount];
     BOOL isLogin = user && user.token.length > 0;
     
@@ -240,7 +246,7 @@
         user.token = @"";
         [[UAccountManager sharedManager] setUserAccount:user];
         [self showToast:@"账号已退出"];
-        [self.menuViewController refreshMenu];
+        [menuController refreshMenu];
     }
 }
 
@@ -302,16 +308,14 @@
     imageView.frame = CGRectMake(70, 20, 100, 96);
     [view addSubview:imageView];
     
-    UIButton *versionButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [versionButton setTitle:version forState:UIControlStateNormal];
-    versionButton.titleLabel.font = [UIFont systemFontOfSize:12.0f];
-    [versionButton addTarget:self action:@selector(onVersionClicked) forControlEvents:UIControlEventTouchUpInside];
-    [versionButton setTitleColor:[UIColor colorWithRed:153.0f/255 green:153.0f/255 blue:153.0f/255 alpha:1.0f]
-                        forState:UIControlStateNormal];
-    versionButton.frame = CGRectMake(100, imageView.frame.size.height + imageView.frame.origin.y + 10, 40, 20);
-    [view addSubview:versionButton];
+    UILabel *versionLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    versionLabel.text = version;
+    versionLabel.textColor = [UIColor colorWithRed:153.0f/255 green:153.0f/255 blue:153.0f/255 alpha:1.0f];
+    versionLabel.font = [UIFont systemFontOfSize:12.f];
+    versionLabel.frame = CGRectMake(100, imageView.frame.size.height + imageView.frame.origin.y + 10, 40, 20);
+    [view addSubview:versionLabel];
     
-    CGFloat y = versionButton.frame.origin.y + versionButton.frame.size.height + 16;
+    CGFloat y = versionLabel.frame.origin.y + versionLabel.frame.size.height + 16;
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, y, 240, 0)];
     label.text = @"©2007 - 2019 Www.U148.Net";
     label.textColor = [UIColor colorWithRed:153.0f/255 green:153.0f/255 blue:153.0f/255 alpha:1.0f];
@@ -332,18 +336,6 @@
     }];
     
     [aboutDialog show];
-}
-
-- (void)onVersionClicked
-{
-    clickCount += 1;
-    if (clickCount == 8) {
-        clickCount = 0;
-        SurprizeViewController *surprizeController = [[SurprizeViewController alloc] init];
-        
-        [self presentViewController:surprizeController animated:YES completion:nil];
-        [aboutDialog close];
-    }
 }
 
 - (void)viewDidLayoutSubviews

@@ -7,26 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MBProgressHUD.h"
 @class User;
 
-@interface CommentViewController : UIViewController <UIAlertViewDelegate, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate>
-{
-    BOOL isKeyboardShow;
-    
-    UITableView *mTableView;
-    UIView *mFootView;
-    UITextField *mTextField;
-    
-    NSMutableArray *dataArray;
-    NSDateFormatter *dateFormatter;
-    
-    NSRegularExpression *contentRegex;
-    
-    NSString *replyId;
-    User *mUser;
-    
-    int page;
-}
+@interface CommentViewController : UIViewController <UIAlertViewDelegate, UITextFieldDelegate, UITableViewDataSource,
+UITableViewDelegate, MBProgressHUDDelegate>
 
 @property (nonatomic, assign) NSString *articleId;
 

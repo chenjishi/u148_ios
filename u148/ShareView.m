@@ -10,7 +10,6 @@
 #import "WXApi.h"
 #import "WeiboSDK.h"
 #import "Feed.h"
-#import "AFHTTPRequestOperation.h"
 
 #define MAX_ICON_COUNT 5
 #define TAG_SHARE_SESSION 101
@@ -81,23 +80,23 @@
     NSURL *url = [NSURL URLWithString:self.feedData.picMin];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    operation.responseSerializer = [AFImageResponseSerializer serializer];
-    
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if (responseObject) {
-            UIImage *image = (UIImage *)responseObject;
-            
-            if (tag == TAG_SHARE_FRIENDS || tag == TAG_SHARE_SESSION) {
-                [self sendToWeixin:image withType:tag];
-            } else {
-                [self sendToWeibo:image];
-            }
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-    }];
-    
-    [operation start];
+//    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+//    operation.responseSerializer = [AFImageResponseSerializer serializer];
+//    
+//    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        if (responseObject) {
+//            UIImage *image = (UIImage *)responseObject;
+//            
+//            if (tag == TAG_SHARE_FRIENDS || tag == TAG_SHARE_SESSION) {
+//                [self sendToWeixin:image withType:tag];
+//            } else {
+//                [self sendToWeibo:image];
+//            }
+//        }
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//    }];
+//    
+//    [operation start];
 }
 
 - (void)sendToWeixin:(UIImage *) image withType:(NSInteger)scene

@@ -38,4 +38,16 @@
     return self;
 }
 
+- (id)initWithDictionary:(NSDictionary *)dict {
+    self = [super init];
+    if (self) {
+        self.icon = [dict objectForKey:@"icon"];
+        self.nickname = [dict objectForKey:@"nickname"];
+        self.sexStr = [dict objectForKey:@"sex"];
+        self.token = [dict objectForKey:@"token"];
+    }
+    
+    return self;
+}
+
 @end

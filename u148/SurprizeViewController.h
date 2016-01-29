@@ -12,31 +12,6 @@
 #import "CustomIOSAlertView.h"
 
 @interface SurprizeViewController : UIViewController
-{
-    UIImageView *dolphin;
-    UIImageView *bubbleBreakView;
-    
-    UIView *containerView;
-    
-    UILabel *shakeLabel;
-    
-    AVAudioPlayer *waterPlayer;
-    
-    UIImage *bubbleImage;
-    
-    UIImageView *mImageView;
-    UILabel *mUILabel;
-    
-    UIButton *exitButton;
-    
-    BOOL blowed;
-    
-    CustomIOSAlertView *popwindow;
-    
-    NSMutableArray *dataArray;
-    
-    int currentIndex;
-}
 
 @property (assign) SystemSoundID pewPewSound;
 

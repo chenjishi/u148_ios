@@ -16,23 +16,11 @@
 
 @interface RootViewController : UIViewController <UIAlertViewDelegate, UIScrollViewDelegate, UIAlertViewDelegate,
 MFMailComposeViewControllerDelegate, TabBarDelegate, SlideNavigationControllerDelegate, OnMenuDelegate>
-{
-    NSInteger tabIndex;
-    int clickCount;
-    CustomIOSAlertView *aboutDialog;
-    
-    CGFloat tabWidth;
-    NSInteger tabCount;
-    TabIndicator *tabIndicator;
-    
-    UIScrollView *tabScrollView;
-}
 
 @property (nonatomic, readonly) UIView *contentView;
 @property (nonatomic, readonly) UIScrollView *scrollView;
 @property (nonatomic, readonly) NSArray *controllers;
 @property (nonatomic, strong) TabGroupView *tabGroupView;
-@property (nonatomic, strong) MenuViewController *menuViewController;
 
 - (id) initWithViewControllers:(NSArray *)controllers;
 

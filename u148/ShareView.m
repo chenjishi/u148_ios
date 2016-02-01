@@ -9,6 +9,7 @@
 #import "ShareView.h"
 #import "WXApi.h"
 #import "WeiboSDK.h"
+#import "UIImageView+AFNetworking.h"
 #import "Feed.h"
 
 #define MAX_ICON_COUNT 5
@@ -36,6 +37,9 @@
                                                                            self.frame.size.height - height)];
         [blankButton addTarget:self action:@selector(onDismiss) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:blankButton];
+        
+        imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+        [self addSubview:imageView];
         
         UIView *containerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.size.height - height,
                                                                          self.frame.size.width, height)];
@@ -80,23 +84,19 @@
     NSURL *url = [NSURL URLWithString:self.feedData.picMin];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     
-//    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-//    operation.responseSerializer = [AFImageResponseSerializer serializer];
-//    
-//    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        if (responseObject) {
-//            UIImage *image = (UIImage *)responseObject;
-//            
-//            if (tag == TAG_SHARE_FRIENDS || tag == TAG_SHARE_SESSION) {
-//                [self sendToWeixin:image withType:tag];
-//            } else {
-//                [self sendToWeibo:image];
-//            }
-//        }
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//    }];
-//    
-//    [operation start];
+    [imageView setImageWithURLRequest:request
+                     placeholderImage:nil
+                              success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, UIImage * _Nonnull image) {
+                                  if (image == nil) return;
+                                  
+                                  if (tag == TAG_SHARE_FRIENDS || tag == TAG_SHARE_SESSION) {
+                                      [self sendToWeixin:image withType:tag];
+                                  } else {
+                                      [self sendToWeibo:image];
+                                  }
+                              }
+                              failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, NSError * _Nonnull error) {
+                              }];
 }
 
 - (void)sendToWeixin:(UIImage *) image withType:(NSInteger)scene

@@ -21,6 +21,7 @@
 {
     NSArray *titleArray;
     NSArray *imageArray;
+    UIImageView *imageView;
 }
 
 @property (nonatomic, strong) Feed *feedData;

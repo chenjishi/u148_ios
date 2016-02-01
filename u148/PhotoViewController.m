@@ -10,6 +10,7 @@
 #import "FLAnimatedImageView.h"
 #import "AFHTTPSessionManager.h"
 #import "FLAnimatedImage.h"
+#import "UIImageView+AFNetworking.h"
 
 @interface PhotoViewController ()
 {
@@ -20,8 +21,6 @@
 
 @implementation PhotoViewController
 @synthesize imageUrl = _imageUrl;
-
-
 
 - (void)viewDidLoad
 {
@@ -92,43 +91,24 @@
     });
 }
 
-- (void)requestImage
-{
+- (void)requestImage {
     NSURL *url = [NSURL URLWithString:_imageUrl];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     
-//    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-//    manager.responseSerializer = [AFImageResponseSerializer serializer];
-//    
-//    manager downloadTaskWithRequest:nil progress:nil destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
-//        //
-//    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
-//        //
-//    }
-//    
-//    
-//    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-//    operation.responseSerializer = [AFImageResponseSerializer serializer];
-//    
-//    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        if (responseObject) {
-//            UIImage *image = (UIImage *)responseObject;
-//            
-//            CGFloat w = image.size.width;
-//            CGFloat h = image.size.height;
-//            
-//            CGFloat requestWidth = self.view.frame.size.width;
-//            CGFloat requestHeight = requestWidth * h / w;
-//            
-//            CGFloat y = (self.view.frame.size.height - 64.0f - requestHeight) / 2.0f;
-//            
-//            CGRect rect = CGRectMake(0, y, requestWidth, requestHeight);
-//            [self resizePicture:rect withImage:image];
-//        }
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//    }];
-//    
-//    [operation start];
+    [imageView setImageWithURLRequest:request
+                     placeholderImage:nil
+                              success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, UIImage * _Nonnull image) {
+                                  if (image == nil) return;
+                                  
+                                  CGFloat w = image.size.width;
+                                  CGFloat h = image.size.height;
+                                  CGFloat requestWidth = self.view.frame.size.width;
+                                  CGFloat requestHeight = requestWidth * h / w;
+                                  CGFloat y = (self.view.frame.size.height - 64.0f - requestHeight) / 2.0f;
+                                  CGRect rect = CGRectMake(0, y, requestWidth, requestHeight);
+                                  [self resizePicture:rect withImage:image];}
+                              failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, NSError * _Nonnull error) {
+                              }];
 }
 
 - (void)imageSavedToPhotosAlbum:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *) contextInfo

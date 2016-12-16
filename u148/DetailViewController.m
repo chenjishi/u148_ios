@@ -35,6 +35,12 @@
     
     isShareViewShowed = NO;
     
+    UIButton *report = [UIButton buttonWithType:UIButtonTypeCustom];
+    [report setImage:[UIImage imageNamed:@"ic_nav_report.png"] forState:UIControlStateNormal];
+    [report addTarget:self action:@selector(onReport) forControlEvents:UIControlEventTouchUpInside];
+    report.frame = CGRectMake(0, 0, 26, 26);
+    UIBarButtonItem *reportItem = [[UIBarButtonItem alloc] initWithCustomView:report];
+    
     UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [commentButton setImage:[UIImage imageNamed:@"ic_nav_cmt.png"] forState:UIControlStateNormal];
     [commentButton addTarget:self action:@selector(startComment) forControlEvents:UIControlEventTouchUpInside];
@@ -53,7 +59,7 @@
     [shareButton addTarget:self action:@selector(onShareButtonClicked) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *shareItem = [[UIBarButtonItem alloc] initWithCustomView:shareButton];
     
-    self.navigationItem.rightBarButtonItems = @[commentItem, favoriteItem, shareItem];
+    self.navigationItem.rightBarButtonItems = @[reportItem, commentItem, favoriteItem, shareItem];
     self.navigationController.navigationBar.topItem.title = self.titleText ? self.titleText : @"收藏";
     
     
@@ -72,6 +78,30 @@
 {
     [super viewWillAppear:animated];
     self.navigationItem.title = @"";
+}
+
+- (void)onReport
+{
+    MFMailComposeViewController *mailController = [[MFMailComposeViewController alloc] init];
+    
+    if ([MFMailComposeViewController canSendMail]) {
+        NSString *sdkVersion = [[UIDevice currentDevice] systemVersion];
+        NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+        NSArray *recipents = [NSArray arrayWithObjects:@"webmaster@u148.net", @"chenjishi313@gmail.com", nil];
+        
+        mailController.mailComposeDelegate = self;
+        [mailController setSubject:[NSString stringWithFormat:@"有意思吧内容举报(标题:%@,ID:%@)", _feed.title, _feed.feedId]];
+        [mailController setToRecipients:recipents];
+        
+        [self presentViewController:mailController animated:YES completion:NULL];
+    } else {
+        [self showToast:@"请先配置您的邮箱账号"];
+    }
+}
+
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 - (void)onShareButtonClicked

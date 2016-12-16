@@ -8,9 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "ShareView.h"
+#import <MessageUI/MessageUI.h>
+
 @class Feed;
 
-@interface DetailViewController : UIViewController <UIAlertViewDelegate, UIWebViewDelegate, ShareDelegate>
+@interface DetailViewController : UIViewController <UIAlertViewDelegate, MFMailComposeViewControllerDelegate, UIWebViewDelegate, ShareDelegate>
 
 {
     NSDictionary *tags;
